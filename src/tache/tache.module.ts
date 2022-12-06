@@ -4,6 +4,6 @@ import { TacheController } from './tache.controller';
 
 @Module({
   controllers: [TacheController],
-  providers: [TacheService]
+  providers: [TacheService],
 })
 export class TacheModule {}
