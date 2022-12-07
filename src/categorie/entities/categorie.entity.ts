@@ -25,7 +25,7 @@ export class Categorie {
   })
   image: string;
 
-  @ManyToOne(() => Utilisateur, (user) => user.categories, { nullable: false })
+  @ManyToOne(() => Utilisateur, (user) => user.categories, { nullable: false }) //Cela permet de rendre nullable la clé primaire, ici user_id
   user_: Utilisateur;
 
   @OneToMany(() => Tache, (taches) => taches.categorie_)

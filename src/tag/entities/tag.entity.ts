@@ -25,6 +25,6 @@ export class Tag {
   @JoinTable()
   taches: Tache[];
 
-  @ManyToOne(() => Utilisateur, (tags) => tags.user_)
+  @ManyToOne(() => Utilisateur, (tags) => tags.user_, { nullable: false })
   user: Utilisateur;
 }
