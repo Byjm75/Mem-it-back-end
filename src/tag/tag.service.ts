@@ -15,19 +15,31 @@ export class TagService {
     return await this.TagRepository.save(createTagDto);
   }
 
-  findAll() {
-    return `This action returns all tag`;
+  async findAll(): Promise<Tag[]> {
+    return await this.TagRepository.find();
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} tag`;
+  async findOne(idValue: string): Promise<Tag> {
+    const tagFound = await this.TagRepository.findOneBy({ id: idValue });
+    if (!tagFound) {
+      throw new NotFoundException(`aucun tag trouvé`);
+    }
+    return tagFound;
   }
 
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
+  async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
+    const upTag = await this.findOne(id);
+    upTag.title = updateTagDto.title;
+    return await this.TagRepository.save(upTag);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tag`;
+  async remove(id: string): Promise<string> {
+    const result = await this.TagRepository.delete({ id });
+    {
+      if (result.affected === 0) {
+        throw new NotFoundException(`aucun tag trouvé à l'id ${id}`);
+      }
+      return `le tag n° ${id} a été supprimé`;
+    }
   }
 }
