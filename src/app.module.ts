@@ -28,7 +28,7 @@ import { Tag } from './tag/entities/tag.entity';
       synchronize: true,
     }),
     UtilisateurModule,
-    //CategorieModule,
+    CategorieModule,
     // TacheModule,
     // TagModule,
   ],
