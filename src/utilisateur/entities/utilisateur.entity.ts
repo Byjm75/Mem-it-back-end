@@ -40,11 +40,7 @@ export class Utilisateur {
   @OneToMany(() => Categorie, (categories) => categories.user_)
   categories: Categorie[];
 
-<<<<<<< HEAD
-  @OneToMany(() => Tache, (taches) => taches.user_)
-=======
   @OneToMany(() => Tache, (task) => task.user_)
->>>>>>> origin/PersoJoss
   user_: Tache;
 
   @OneToMany(() => Tag, (userTag) => userTag.user)

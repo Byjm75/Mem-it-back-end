@@ -29,13 +29,8 @@ import { Tag } from './tag/entities/tag.entity';
     }),
     UtilisateurModule,
     CategorieModule,
-<<<<<<< HEAD
     TacheModule,
     TagModule,
-=======
-    // TacheModule,
-    // TagModule,
->>>>>>> 4c312ad7ff39933879540de538ad049eefaede31
   ],
   controllers: [AppController],
   providers: [AppService],
