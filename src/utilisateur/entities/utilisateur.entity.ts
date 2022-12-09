@@ -34,7 +34,7 @@ export class Utilisateur {
   @Column({
     nullable: true,
   })
-  picture: string;
+  picture?: string;
 
   //Je relis les tables suivant leurs cardinalités et par les clés étrangéres.
   @OneToMany(() => Categorie, (categories) => categories.user_)

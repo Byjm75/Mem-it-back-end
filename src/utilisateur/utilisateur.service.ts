@@ -47,10 +47,11 @@ export class UtilisateurService {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
       id: idValue,
     });
-    (upDateUtilisateur.email = updateUtilisateurDto.email),
-      (upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo),
-      (upDateUtilisateur.password = updateUtilisateurDto.password),
-      (upDateUtilisateur.picture = updateUtilisateurDto.picture);
+
+    upDateUtilisateur.email = updateUtilisateurDto.email;
+    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+    upDateUtilisateur.password = updateUtilisateurDto.password;
+    upDateUtilisateur.picture = updateUtilisateurDto.picture;
 
     return await this.utilisateurRepository.save(upDateUtilisateur);
   }
