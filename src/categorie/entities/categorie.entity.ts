@@ -25,6 +25,9 @@ export class Categorie {
   })
   image: string;
 
+  @Column({ default: false, nullable: false })
+  favoris: boolean;
+
   @ManyToOne(() => Utilisateur, (user) => user.categories, { nullable: false }) //Cela permet de rendre nullable la clé primaire, ici user_id
   user_: Utilisateur;
 
