@@ -15,7 +15,7 @@ import { Tag } from './tag/entities/tag.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: '.env.local',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -27,10 +27,10 @@ import { Tag } from './tag/entities/tag.entity';
       entities: [Utilisateur, Categorie, Tache, Tag],
       synchronize: true,
     }),
-    // UtilisateurModule,
-    // CategorieModule,
-    // TacheModule,
-    // TagModule,
+    UtilisateurModule,
+    CategorieModule,
+    TacheModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
