@@ -40,7 +40,7 @@ export class Utilisateur {
   categories: Categorie[];
 
   @OneToMany(() => Tache, (task) => task.user_)
-  tache: Tache;
+  user_: Tache;
 
   @OneToMany(() => Tag, (userTag) => userTag.user)
   tags: Tag;

@@ -27,16 +27,16 @@ export class TacheController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tacheService.findOne(+id);
+    return this.tacheService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTacheDto: UpdateTacheDto) {
-    return this.tacheService.update(+id, updateTacheDto);
+    return this.tacheService.update(id, updateTacheDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tacheService.remove(+id);
+    return this.tacheService.remove(id);
   }
 }
