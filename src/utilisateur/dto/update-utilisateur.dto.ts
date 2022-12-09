@@ -5,4 +5,5 @@ import { CreateUtilisateurDto } from './create-utilisateur.dto';
 export class UpdateUtilisateurDto {
   email: string;
   pseudo: string;
+  password: string;
 }
