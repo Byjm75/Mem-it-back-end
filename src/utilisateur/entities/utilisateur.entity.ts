@@ -39,8 +39,8 @@ export class Utilisateur {
   @OneToMany(() => Categorie, (categories) => categories.user_)
   categories: Categorie[];
 
-  @OneToMany(() => Tache, (mouss) => mouss.user_)
-  user_: Tache;
+  @OneToMany(() => Tache, (task) => task.user_)
+  tache: Tache;
 
   @OneToMany(() => Tag, (userTag) => userTag.user)
   tags: Tag;
