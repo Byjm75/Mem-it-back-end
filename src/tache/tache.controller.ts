@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TacheService } from './tache.service';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
@@ -19,16 +27,16 @@ export class TacheController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tacheService.findOne(+id);
+    return this.tacheService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTacheDto: UpdateTacheDto) {
-    return this.tacheService.update(+id, updateTacheDto);
+    return this.tacheService.update(id, updateTacheDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tacheService.remove(+id);
+    return this.tacheService.remove(id);
   }
 }
