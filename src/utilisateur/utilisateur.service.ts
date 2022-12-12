@@ -6,7 +6,6 @@ import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 @Injectable()
-@Injectable()
 export class UtilisateurService {
   //Construction et rappel de la table (utilisateur)
   constructor(
