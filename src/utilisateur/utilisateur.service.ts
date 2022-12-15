@@ -5,19 +5,7 @@ import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 @Injectable()
-@Injectable()
 export class UtilisateurService {
-  //Construction et rappel de la table (utilisateur)
-  constructor(
-    @InjectRepository(Utilisateur)
-    private utilisateurRepository: Repository<Utilisateur>,
-  ) {}
-
-  // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
-  async create(
-    createUtilisateurDto: CreateUtilisateurDto,
-  ): Promise<Utilisateur> {
-    return await this.utilisateurRepository.save(createUtilisateurDto);
   //Construction et rappel de la table (utilisateur)
   constructor(
     @InjectRepository(Utilisateur)
