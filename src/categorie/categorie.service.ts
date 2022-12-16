@@ -4,6 +4,7 @@ import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { Categorie } from './entities/categorie.entity';
 import { Repository } from 'typeorm';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Injectable()
 export class CategorieService {
@@ -12,8 +13,15 @@ export class CategorieService {
     private categorieRepository: Repository<Categorie>,
   ) {}
 
-  async create(createCategorieDto: CreateCategorieDto): Promise<Categorie> {
-    return await this.categorieRepository.save(createCategorieDto);
+  async create(
+    createCategorieDto: CreateCategorieDto,
+    utilisateur: Utilisateur,
+  ): Promise<Categorie> {
+    const newCategorie = this.categorieRepository.create({
+      ...createCategorieDto,
+      user_: utilisateur,
+    });
+    return await this.categorieRepository.save(newCategorie);
   }
 
   async findAll(): Promise<Categorie[]> {

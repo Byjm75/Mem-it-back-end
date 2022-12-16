@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
@@ -12,8 +13,15 @@ export class TacheService {
     private TacheRepository: Repository<Tache>,
   ) {}
 
-  async create(createTacheDto: CreateTacheDto): Promise<Tache> {
-    return await this.TacheRepository.save(createTacheDto);
+  async create(
+    createTacheDto: CreateTacheDto,
+    utilisateur: Utilisateur,
+  ): Promise<Tache> {
+    const newTache = this.TacheRepository.create({
+      ...createTacheDto,
+      user_: utilisateur,
+    });
+    return await this.TacheRepository.save(newTache);
     // Cette action crée un nouveau mémo;
   }
 

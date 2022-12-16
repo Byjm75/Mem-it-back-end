@@ -6,18 +6,28 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { TacheService } from './tache.service';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
+import { Tache } from './entities/tache.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
 
 @Controller('tache')
 export class TacheController {
   constructor(private readonly tacheService: TacheService) {}
 
   @Post()
-  create(@Body() createTacheDto: CreateTacheDto) {
-    return this.tacheService.create(createTacheDto);
+  @UseGuards(AuthGuard())
+  create(
+    @Body() createTacheDto: CreateTacheDto,
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Tache> {
+    console.log(Utilisateur);
+    return this.tacheService.create(createTacheDto, utilisateur);
   }
 
   @Get()
