@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class UtilisateurService {
   //Construction et rappel de la table (utilisateur)
+
+  //Construction et rappel de la table (utilisateur)
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
