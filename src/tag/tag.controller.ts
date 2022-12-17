@@ -21,8 +21,13 @@ export class TagController {
   constructor(private readonly tagService: TagService) {}
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  @UseGuards(AuthGuard())
+  create(
+    @Body() createTagDto: CreateTagDto,
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Tag> {
+    console.log(Utilisateur);
+    return this.tagService.create(createTagDto, utilisateur);
   }
 
   @Get()
