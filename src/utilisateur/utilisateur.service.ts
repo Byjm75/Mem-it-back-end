@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 @Injectable()
 export class UtilisateurService {
+  utilisateurRepository: any;
   //Construction et rappel de la table (utilisateur)
 
   // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
@@ -14,18 +15,13 @@ export class UtilisateurService {
     createUtilisateurDto: CreateUtilisateurDto,
   ): Promise<Utilisateur> {
     return await this.utilisateurRepository.save(createUtilisateurDto);
-  //Construction et rappel de la table (utilisateur)
-  constructor(
+    //Construction et rappel de la table (utilisateur)
+    UtilisateurService.constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
-  ) {}
-
-  // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
-  async create(
-    createUtilisateurDto: CreateUtilisateurDto,
-  ): Promise<Utilisateur> {
-    return await this.utilisateurRepository.save(createUtilisateurDto);
+  ) { }
   }
+
 
   // .get pour trouver l'ensemble des utilisateurs contenus ds la table utilisateur
   async findAll(): Promise<Utilisateur[]> {
