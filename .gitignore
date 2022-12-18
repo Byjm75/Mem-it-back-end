@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+.env
 # Logs
 logs
 *.log
@@ -33,5 +34,3 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.jsonnode_modules
 dist
-
-.env
