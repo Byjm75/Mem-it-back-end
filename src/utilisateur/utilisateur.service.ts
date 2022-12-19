@@ -6,6 +6,7 @@ import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 @Injectable()
 export class UtilisateurService {
+  utilisateurRepository: any;
   //Construction et rappel de la table (utilisateur)
   constructor(
     @InjectRepository(Utilisateur)
@@ -17,6 +18,11 @@ export class UtilisateurService {
     createUtilisateurDto: CreateUtilisateurDto,
   ): Promise<Utilisateur> {
     return await this.utilisateurRepository.save(createUtilisateurDto);
+    //Construction et rappel de la table (utilisateur)
+    UtilisateurService.constructor(
+    @InjectRepository(Utilisateur)
+    private utilisateurRepository: Repository<Utilisateur>,
+  ) { }
   }
 
   // .get pour trouver l'ensemble des utilisateurs contenus ds la table utilisateur

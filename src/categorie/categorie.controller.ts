@@ -15,6 +15,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
+import { title } from 'process';
 
 @Controller('categorie')
 export class CategorieController {
@@ -31,25 +32,35 @@ export class CategorieController {
   }
 
   @Get()
-  findAll() {
+  @UseGuards(AuthGuard())
+  findAll(): Promise<Categorie[]> {
+    console.log(Categorie);
     return this.categorieService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categorieService.findOne(id);
+  @UseGuards(AuthGuard())
+  findOne(@Param('id') title: string) {
+    return this.categorieService.findOne(title);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
+    utilisateur: Utilisateur,
   ) {
-    return this.categorieService.update(id, updateCategorieDto);
+    return this.categorieService.update(id, updateCategorieDto, utilisateur);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categorieService.remove(id);
+  @UseGuards(AuthGuard())
+  remove(
+    @Param('id') id: string,
+    @Body()
+    utilisateur: Utilisateur,
+  ) {
+    return this.categorieService.remove(id, title);
   }
 }
