@@ -41,9 +41,12 @@ export class CategorieService {
   async update(
     idValue: string,
     updateCategorieDto: UpdateCategorieDto,
+    utilisateur: Utilisateur,
   ): Promise<Categorie> {
     const upDateCategorie = await this.categorieRepository.findOneBy({
       id: idValue,
+      ...updateCategorieDto,
+      user_: utilisateur,
     });
     (upDateCategorie.title = updateCategorieDto.title),
       (upDateCategorie.image = updateCategorieDto.image),
@@ -52,13 +55,13 @@ export class CategorieService {
     return await this.categorieRepository.save(upDateCategorie);
   }
 
-  async remove(id: string): Promise<string> {
+  async remove(id: string, title: string): Promise<string> {
     const result = await this.categorieRepository.delete({
       id,
     });
     if (result.affected === 0) {
       throw new NotFoundException(`Categorie non trouvé avec l'id:${id}`);
     }
-    return `This action removes a #${id} categorie`;
+    return `This action removes a ${title} categorie`;
   }
 }
