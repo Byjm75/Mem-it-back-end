@@ -6,18 +6,28 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { Tag } from './entities/tag.entity';
 
 @Controller('tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagService.create(createTagDto);
+  @UseGuards(AuthGuard())
+  create(
+    @Body() createTagDto: CreateTagDto,
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Tag> {
+    console.log(Utilisateur);
+    return this.tagService.create(createTagDto, utilisateur);
   }
 
   @Get()
