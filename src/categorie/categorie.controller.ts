@@ -16,6 +16,7 @@ import { Categorie } from './entities/categorie.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 
+
 @Controller('categorie')
 export class CategorieController {
   constructor(private readonly categorieService: CategorieService) {}
