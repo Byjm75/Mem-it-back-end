@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CategorieService } from './categorie.service';
 import { CategorieController } from './categorie.controller';
 import { Categorie } from './entities/categorie.entity';

@@ -1,22 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class UtilisateurService {
-  constructor(
-    @InjectRepository(Utilisateur)
-    private utilisateurRepository: Repository<Utilisateur>,
-  ) {}
-
+ constructor(
+      @InjectRepository(Utilisateur)
+      private utilisateurRepository: Repository<Utilisateur>,
+    ) { }
   //Construction et rappel de la table (utilisateur)
 
   // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
   async create(
     createUtilisateurDto: CreateUtilisateurDto,
   ): Promise<Utilisateur> {
+    //Construction et rappel de la table (utilisateur)
     return await this.utilisateurRepository.save(createUtilisateurDto);
     //Construction et rappel de la table (utilisateur)
   }
@@ -64,4 +64,5 @@ export class UtilisateurService {
     }
     return `This action removes a #${id} utilisateur`;
   }
+  
 }

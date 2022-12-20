@@ -14,7 +14,7 @@ import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
     TypeOrmModule.forFeature([Utilisateur]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '12h' },
       secret: 'jaimelessushis',
     }),
   ],
