@@ -45,6 +45,6 @@ export class Tache {
   @ManyToOne(() => Categorie, (categories) => categories.taches)
   categorie_: Categorie;
 
-  @ManyToOne(() => Utilisateur, (user_) => user_.id, { nullable: false })
+  @ManyToOne(() => Utilisateur, (user_) => user_.id)
   user_: Utilisateur;
 }

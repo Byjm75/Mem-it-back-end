@@ -13,6 +13,8 @@ export class Categorie {
   @PrimaryGeneratedColumn('uuid') // La fonction uuid est une dependencie et transforme l'Id de type number en type string.
   id?: string;
 
+  
+
   @Column({
     nullable: false, // Ici le typage "nullable"= false indique que l'utilisateur doit obligatoirement remplire le title.
     type: 'varchar',
