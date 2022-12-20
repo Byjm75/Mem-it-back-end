@@ -29,8 +29,8 @@ export class AuthService {
 
     // création d'une entité user
     const user = this.utilisateurRepository.create({
-      email,
       pseudo,
+      email,
       password: hashedPassword,
     });
 

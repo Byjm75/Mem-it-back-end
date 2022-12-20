@@ -18,34 +18,31 @@ import { GetUser } from 'src/auth/get-user.decorator';
 import { title } from 'process';
 
 @Controller('categorie')
+@UseGuards(AuthGuard())
 export class CategorieController {
   constructor(private readonly categorieService: CategorieService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   create(
     @Body() createCategorieDto: CreateCategorieDto,
     @GetUser() utilisateur: Utilisateur,
-  ): Promise<Categorie> {
+  ): Promise<Categorie | string> {
     console.log(Utilisateur);
     return this.categorieService.create(createCategorieDto, utilisateur);
   }
 
   @Get()
-  @UseGuards(AuthGuard())
   findAll(): Promise<Categorie[]> {
     console.log(Categorie);
     return this.categorieService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard())
   findOne(@Param('id') title: string) {
     return this.categorieService.findOne(title);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard())
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
@@ -54,13 +51,12 @@ export class CategorieController {
     return this.categorieService.update(id, updateCategorieDto, utilisateur);
   }
 
-  @Delete(':id')
-  @UseGuards(AuthGuard())
+  @Delete(':title')
   remove(
-    @Param('id') id: string,
+    @Param('title') title: string,
     @Body()
     utilisateur: Utilisateur,
   ) {
-    return this.categorieService.remove(id, title);
+    return this.categorieService.remove(title, utilisateur);
   }
 }
