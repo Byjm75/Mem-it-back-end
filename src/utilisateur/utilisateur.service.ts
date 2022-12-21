@@ -4,11 +4,14 @@ import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
+import { Tache } from 'src/tache/entities/tache.entity';
 @Injectable()
 export class UtilisateurService {
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
+    @InjectRepository(Tache)
+    private tacheRepository: Repository<Tache>,
   ) {}
 
   //Construction et rappel de la table (utilisateur)
@@ -38,6 +41,40 @@ export class UtilisateurService {
     }
     return utilisateurFound;
   }
+
+  // Récupérer toutes les tâches créées par un user
+  async findAllTaskCreatedByUser(userId: string) {
+    // vérifier si userId correspond bien à un utilisateur
+    // const allTaches = await this.tacheRepository.find({
+    //   user_: {
+    //     id: userId,
+    //   }
+    // });
+    const allTaches = await this.tacheRepository
+      .createQueryBuilder('tache')
+      .leftJoinAndSelect('tache.user_', 'user')
+      .where('user.id = :id', { id: userId })
+      .getMany();
+    console.log('taches créées par le user : ', allTaches);
+    return allTaches;
+  }
+
+  // async findAllTagCreatedByUser(userId: string) {
+  // vérifier si userId correspond bien à un utilisateur
+  // const allTaches = await this.tacheRepository.find({
+  //   user_: {
+  //     id: userId,
+  //   }
+  // });
+  //   const allTags = await this.tacheRepository
+  //     .createQueryBuilder('tag')
+  //     .leftJoinAndSelect('tag.user_', 'user')
+  //     .leftJoinAndSelect('tache.user_', 'tacheuser')
+  //     .where('user.id = :id', { id: userId })
+  //     .getMany();
+  //   console.log('taches créées par le user : ', allTaches);
+  //   return allTaches;
+  // }
 
   //.patch pour modifier l'ensemble ou un élément de l'interface
   async update(
