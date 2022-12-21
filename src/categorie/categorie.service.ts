@@ -5,8 +5,6 @@ import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { Categorie } from './entities/categorie.entity';
 import { Repository } from 'typeorm';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { title } from 'process';
-
 @Injectable()
 export class CategorieService {
   constructor(
@@ -20,7 +18,7 @@ export class CategorieService {
   ): Promise<Categorie | string> {
     const { title } = createCategorieDto;
     const existAlready = await this.categorieRepository.findOneBy({ title });
-    console.log('Test Existtttttttttt', existAlready);
+    console.log('Title Existtttttttttt', existAlready);
     if (existAlready) {
       return `Vous avez déja crée la catégorie avec le titre:${title}`;
     }
@@ -28,7 +26,7 @@ export class CategorieService {
       ...createCategorieDto,
       user_: utilisateur,
     });
-    console.log('New cate createeeeeeeeeeee!', newCategorie);
+    console.log('Newcategorie createddddddddddddd!', newCategorie);
     return await this.categorieRepository.save(newCategorie);
   }
 
@@ -36,24 +34,29 @@ export class CategorieService {
     return await this.categorieRepository.find();
   }
 
-  async findOne(idValue: string): Promise<Categorie> {
+  async findOne(
+    title: string,
+    utilisateur: Utilisateur,
+  ): Promise<Categorie | string> {
     const categorieFound = await this.categorieRepository.findOneBy({
-      id: idValue,
+      title,
+      user_: utilisateur,
     });
     if (!categorieFound) {
-      throw new NotFoundException(`Categorie non trouvé avec l'id:${idValue}`);
+      throw new NotFoundException(
+        `Categorie non trouvé avec le titre:${title}`,
+      );
     }
     return categorieFound;
   }
 
   async update(
-    idValue: string,
+    title: string,
     updateCategorieDto: UpdateCategorieDto,
     utilisateur: Utilisateur,
-  ): Promise<Categorie> {
+  ): Promise<Categorie | string> {
     const upDateCategorie = await this.categorieRepository.findOneBy({
-      id: idValue,
-      ...updateCategorieDto,
+      title,
       user_: utilisateur,
     });
     (upDateCategorie.title = updateCategorieDto.title),
@@ -78,51 +81,4 @@ export class CategorieService {
     }
     return `Cette action entraine la suppresion de la catégorie:${title}`;
   }
-
-  // async create(
-  //   createCategorieDto: CreateCategorieDto,
-  //   utilisateur: Utilisateur,
-  // ): Promise<Categorie> {
-  //   const newCategorie = this.categorieRepository.create({
-  //     ...createCategorieDto,
-  //     user_: utilisateur,
-  //   });
-  //   try {
-  //     const createdCategorie = await this.categorieRepository.save(
-  //       newCategorie,
-  //     );
-  //     return createdCategorie;
-  //   } catch (error) {
-  //     if (error.code === '23505') {
-  //       throw new ConflictException('La catégorie exist');
-  //     } else {
-  //       throw new InternalServerErrorException();
-  //     }
-  //   }
-  //   //return await this.categorieRepository.save(newCategorie);
-  // }
-  // async register(createAuthDto: CreateAuthDto) {
-  //   const { email, pseudo, password } = createAuthDto;
-
-  //   // création d'une entité user
-  //   const user = this.utilisateurRepository.create({
-  //     pseudo,
-  //     email,
-  //     password: hashedPassword,
-  //   });
-
-  //   try {
-  //     // enregistrement de l'entité user
-  //     const createdUser = await this.utilisateurRepository.save(user);
-  //     //delete createdUser.password;
-  //     return createdUser;
-  //   } catch (error) {
-  //     // gestion des erreurs
-  //     if (error.code === '23505') {
-  //       throw new ConflictException('username already exists');
-  //     } else {
-  //       throw new InternalServerErrorException();
-  //     }
-  //   }
-  // }
 }

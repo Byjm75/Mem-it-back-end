@@ -8,14 +8,14 @@ export class Tache {
   id?: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
     type: 'varchar',
     length: 50,
   })
   title: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
     type: 'date',
   })
   date_creation: string;
