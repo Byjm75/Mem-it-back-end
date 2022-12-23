@@ -8,4 +8,5 @@ export class UpdateUtilisateurDto extends PartialType(CreateUtilisateurDto) {
   pseudo: string;
   password: string;
   picture: string;
+  hashedPassword: string;
 }

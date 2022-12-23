@@ -17,11 +17,11 @@ export class TacheService {
     createTacheDto: CreateTacheDto,
     utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    const { title, date_creation } = createTacheDto;
+    const { title } = createTacheDto;
     const existAlready = await this.TacheRepository.findOneBy({ title });
     console.log('Tache Existtttttttttt', existAlready);
     if (existAlready) {
-      return `Vous avez déja crée la Tâche avec le titre:${title} ${date_creation}`;
+      return `Vous avez déja crée la Tâche avec le titre:${title}`;
     }
     const newTache = await this.TacheRepository.create({
       ...createTacheDto,
