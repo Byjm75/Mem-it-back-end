@@ -30,6 +30,11 @@ export class UtilisateurController {
     return this.utilisateurService.findOne(id);
   }
 
+  @Get('/taches/:id')
+  findAllTaskCreatedByUser(@Param('id') userId: string) {
+    return this.utilisateurService.findAllTaskCreatedByUser(userId);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

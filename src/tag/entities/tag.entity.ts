@@ -21,7 +21,7 @@ export class Tag {
   })
   title: string;
 
-  @ManyToMany(() => Tache)
+  @ManyToMany(() => Tache, { eager: true })
   @JoinTable()
   taches: Tache[];
 

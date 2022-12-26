@@ -2,8 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './entities/tag.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Injectable()
 export class TagService {
@@ -11,8 +12,16 @@ export class TagService {
     @InjectRepository(Tag)
     private TagRepository: Repository<Tag>,
   ) {}
-  async create(createTagDto: CreateTagDto): Promise<Tag> {
-    return await this.TagRepository.save(createTagDto);
+
+  async create(
+    createTagDto: CreateTagDto,
+    utilisateur: Utilisateur,
+  ): Promise<Tag> {
+    const newTag = this.TagRepository.create({
+      ...createTagDto,
+      user: utilisateur,
+    });
+    return await this.TagRepository.save(newTag);
   }
 
   async findAll(): Promise<Tag[]> {
