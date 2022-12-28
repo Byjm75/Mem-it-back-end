@@ -16,7 +16,13 @@ export class TagService {
   async create(
     createTagDto: CreateTagDto,
     utilisateur: Utilisateur,
-  ): Promise<Tag> {
+  ): Promise<Tag | string> {
+    const { title } = createTagDto;
+    const existAlready = await this.TagRepository.findOneBy({ title });
+    console.log('Title Existtttttttttt', existAlready);
+    if (existAlready) {
+      return `Vous avez déja crée la tache avec le titre:${title}`;
+    }
     const newTag = this.TagRepository.create({
       ...createTagDto,
       user: utilisateur,

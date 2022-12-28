@@ -17,21 +17,21 @@ import { GetUser } from 'src/auth/get-user.decorator';
 import { Tag } from './entities/tag.entity';
 
 @Controller('tag')
+@UseGuards(AuthGuard())
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   create(
     @Body() createTagDto: CreateTagDto,
     @GetUser() utilisateur: Utilisateur,
-  ): Promise<Tag> {
+  ): Promise<Tag | string> {
     console.log(Utilisateur);
     return this.tagService.create(createTagDto, utilisateur);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Tag[]> {
     return this.tagService.findAll();
   }
 
