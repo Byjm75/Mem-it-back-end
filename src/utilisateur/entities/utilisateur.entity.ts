@@ -8,7 +8,7 @@ import { Tag } from 'src/tag/entities/tag.entity';
 export class Utilisateur {
   //Je génére la clé primaire
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   //Je crée les colonnes
   @Column({
