@@ -11,6 +11,8 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
+    @InjectRepository(Utilisateur)
+    private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
 
   async create(
@@ -31,8 +33,10 @@ export class TacheService {
     // Cette action crée un nouveau mémo;
   }
 
-  async findAll(): Promise<Tache[]> {
-    return await this.TacheRepository.find();
+  async findAll(utilisateur: Utilisateur): Promise<Tache[]> {
+    const allTasks = await this.TacheRepository.find({});
+    console.log('les tâches de', allTasks);
+    return allTasks;
   }
 
   async findOne(title: string, utilisateur: Utilisateur): Promise<Tache> {

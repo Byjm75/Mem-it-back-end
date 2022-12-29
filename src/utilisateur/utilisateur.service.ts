@@ -5,12 +5,14 @@ import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { Tache } from 'src/tache/entities/tache.entity';
 @Injectable()
 export class UtilisateurService {
-  tacheRepository: any;
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
+    @InjectRepository(Tache)
+    private tacheRepository: Repository<Tache>,
   ) {}
   //Construction et rappel de la table (utilisateur)
 
@@ -85,10 +87,10 @@ export class UtilisateurService {
     });
     const salt = await bcrypt.genSalt();
     let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
-upDateUtilisateur.password= hashedPassword
+    upDateUtilisateur.password = hashedPassword;
     upDateUtilisateur.email = updateUtilisateurDto.email;
     upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
-    hashedPassword =updateUtilisateurDto.password;
+    hashedPassword = updateUtilisateurDto.password;
     upDateUtilisateur.picture = updateUtilisateurDto.picture;
 
     return await this.utilisateurRepository.save(upDateUtilisateur);
