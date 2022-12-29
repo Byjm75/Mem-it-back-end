@@ -31,6 +31,7 @@ export class UtilisateurService {
   async findAll(): Promise<Utilisateur[]> {
     return await this.utilisateurRepository.find();
   }
+  
 
   //.get pour trouver un utilisateur via son ID
   async findOne(idValue: string): Promise<Utilisateur> {
