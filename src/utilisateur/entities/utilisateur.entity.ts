@@ -45,4 +45,5 @@ export class Utilisateur {
 
   @OneToMany(() => Tag, (userTag) => userTag.user)
   tags: Tag;
+  hashedPassword: string;
 }

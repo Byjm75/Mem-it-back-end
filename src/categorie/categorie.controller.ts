@@ -15,12 +15,9 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
-<<<<<<< HEAD
 import { title } from 'process';
 
 
-=======
->>>>>>> a71bb9d97d5db50db464254cb6cc0554416216e5
 @Controller('categorie')
 @UseGuards(AuthGuard())
 export class CategorieController {

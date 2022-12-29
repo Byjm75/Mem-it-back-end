@@ -4,22 +4,8 @@ import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository } from 'typeorm';
-<<<<<<< HEAD
 import { InjectRepository } from '@nestjs/typeorm';
-@Injectable()
-export class UtilisateurService {
- constructor(
-      @InjectRepository(Utilisateur)
-      private utilisateurRepository: Repository<Utilisateur>,
-    ) { }
-=======
-=======
-import { InjectRepository } from '@nestjs/typeorm';
-//import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
-import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
-import { Utilisateur } from './entities/utilisateur.entity';
-import { Repository, Table } from 'typeorm';
->>>>>>> PersoYo
+import * as bcrypt from 'bcrypt';
 import { Tache } from 'src/tache/entities/tache.entity';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 @Injectable()
@@ -30,26 +16,16 @@ export class UtilisateurService {
     @InjectRepository(Tache)
     private tacheRepository: Repository<Tache>,
   ) {}
-
->>>>>>> a71bb9d97d5db50db464254cb6cc0554416216e5
   //Construction et rappel de la table (utilisateur)
 
   // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
-<<<<<<< HEAD
-  async create(
-    createUtilisateurDto: CreateUtilisateurDto,
-  ): Promise<Utilisateur> {
-    //Construction et rappel de la table (utilisateur)
-    return await this.utilisateurRepository.save(createUtilisateurDto);
-    //Construction et rappel de la table (utilisateur)
-  }
-=======
   // async create(
   //   createUtilisateurDto: CreateUtilisateurDto,
   // ): Promise<Utilisateur> {
+  //   //Construction et rappel de la table (utilisateur)
   //   return await this.utilisateurRepository.save(createUtilisateurDto);
+  //   //Construction et rappel de la table (utilisateur)
   // }
->>>>>>> PersoYo
 
   // .get pour trouver l'ensemble des utilisateurs contenus ds la table utilisateur
   async findAll(): Promise<Utilisateur[]> {
@@ -108,10 +84,14 @@ export class UtilisateurService {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
       id: id,
     });
-    (upDateUtilisateur.email = updateUtilisateurDto.email),
-      (upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo),
-      (upDateUtilisateur.password = updateUtilisateurDto.password),
-      (upDateUtilisateur.picture = updateUtilisateurDto.picture);
+    const salt = await bcrypt.genSalt();
+    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
+    upDateUtilisateur.password = hashedPassword;
+    upDateUtilisateur.email = updateUtilisateurDto.email;
+    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+    hashedPassword = updateUtilisateurDto.password;
+    upDateUtilisateur.picture = updateUtilisateurDto.picture;
+
     return await this.utilisateurRepository.save(upDateUtilisateur);
   }
 
@@ -124,21 +104,4 @@ export class UtilisateurService {
     }
     return `This action removes a #${id} utilisateur`;
   }
-  
-=======
-  //!!!!NE FONCTIONNE PAS!!!!
-  // async remove(
-  //   id: string,
-  //   utilisateur: Utilisateur,
-  // ): Promise<Utilisateur | string> {
-  //   const result = await this.utilisateurRepository.delete({
-  //     id,
-  //     user_: utilisateur,
-  //   });
-  //   if (result.affected === 0) {
-  //     throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-  //   }
-  //   return `Cette action a supprmé l'utilisateur #${id}`;
-  // }
->>>>>>> PersoYo
 }
