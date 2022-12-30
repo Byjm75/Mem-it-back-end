@@ -11,6 +11,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Entity()
 export class Tag {
+  [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -25,6 +26,6 @@ export class Tag {
   @JoinTable()
   taches: Tache[];
 
-  @ManyToOne(() => Utilisateur, (tags) => tags.user_, { nullable: false })
-  user: Utilisateur;
+  @ManyToOne(() => Utilisateur, (tags) => tags.id, { nullable: false })
+  userId: Utilisateur;
 }

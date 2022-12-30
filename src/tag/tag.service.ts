@@ -25,7 +25,7 @@ export class TagService {
     }
     const newTag = this.TagRepository.create({
       ...createTagDto,
-      user: utilisateur,
+      userId: utilisateur,
     });
     return await this.TagRepository.save(newTag);
   }
@@ -34,27 +34,44 @@ export class TagService {
     return await this.TagRepository.find();
   }
 
-  async findOne(idValue: string): Promise<Tag> {
-    const tagFound = await this.TagRepository.findOneBy({ id: idValue });
+  async findOne(
+    title: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
+    const tagFound = await this.TagRepository.findOneBy({
+      title,
+      userId: utilisateur,
+    });
     if (!tagFound) {
-      throw new NotFoundException(`aucun tag trouvé`);
+      throw new NotFoundException(`aucun tag trouvé avec le titre:${title}`);
     }
     return tagFound;
   }
 
-  async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
-    const upTag = await this.findOne(id);
-    upTag.title = updateTagDto.title;
-    return await this.TagRepository.save(upTag);
+  async update(
+    title: string,
+    updateTagDto: UpdateTagDto,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
+    const upDateTag = await this.TagRepository.findOneBy({
+      title,
+      userId: utilisateur,
+    });
+    upDateTag.title = updateTagDto.title;
+
+    return await this.TagRepository.save(upDateTag);
   }
 
-  async remove(id: string): Promise<string> {
-    const result = await this.TagRepository.delete({ id });
+  async remove(title: string, utilisateur: Utilisateur): Promise<Tag | string> {
+    const result = await this.TagRepository.delete({
+      userId: utilisateur,
+      title,
+    });
     {
       if (result.affected === 0) {
-        throw new NotFoundException(`aucun tag trouvé à l'id ${id}`);
+        throw new NotFoundException(`aucun tag trouvé le titre:${title}`);
       }
-      return `le tag n° ${id} a été supprimé`;
+      return `le tag avec le tire:${title} a été supprimé`;
     }
   }
 }

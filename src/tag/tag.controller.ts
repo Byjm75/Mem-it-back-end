@@ -35,18 +35,22 @@ export class TagController {
     return this.tagService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagService.findOne(id);
+  @Get(':title')
+  findOne(@Param('title') title: string, @GetUser() utilisateur: Utilisateur) {
+    return this.tagService.findOne(title, utilisateur);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagService.update(id, updateTagDto);
+  @Patch(':title')
+  update(
+    @Param('title') title: string,
+    @Body() updateTagDto: UpdateTagDto,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
+    return this.tagService.update(title, updateTagDto, utilisateur);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tagService.remove(id);
+  @Delete(':title')
+  remove(@Param('title') title: string, @GetUser() utilisateur: Utilisateur) {
+    return this.tagService.remove(title, utilisateur);
   }
 }
