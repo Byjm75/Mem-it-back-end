@@ -13,14 +13,8 @@ import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
-<<<<<<< HEAD
-import { title } from 'process';
-
-
-=======
->>>>>>> a71bb9d97d5db50db464254cb6cc0554416216e5
+import { AuthGuard } from '@nestjs/passport';
 @Controller('categorie')
 @UseGuards(AuthGuard())
 export class CategorieController {
