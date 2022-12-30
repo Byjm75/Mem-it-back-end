@@ -15,45 +15,25 @@ export class UtilisateurService {
 =======
 =======
 import { InjectRepository } from '@nestjs/typeorm';
-//import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository, Table } from 'typeorm';
->>>>>>> PersoYo
-import { Tache } from 'src/tache/entities/tache.entity';
-import { Categorie } from 'src/categorie/entities/categorie.entity';
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UtilisateurService {
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
-    @InjectRepository(Tache)
-    private tacheRepository: Repository<Tache>,
   ) {}
 
->>>>>>> a71bb9d97d5db50db464254cb6cc0554416216e5
-  //Construction et rappel de la table (utilisateur)
-
-  // .Post pour la Création d'un utilisateur avec le rappel des éléments du DTO (interface)
-<<<<<<< HEAD
-  async create(
-    createUtilisateurDto: CreateUtilisateurDto,
-  ): Promise<Utilisateur> {
-    //Construction et rappel de la table (utilisateur)
-    return await this.utilisateurRepository.save(createUtilisateurDto);
-    //Construction et rappel de la table (utilisateur)
-  }
-=======
-  // async create(
-  //   createUtilisateurDto: CreateUtilisateurDto,
-  // ): Promise<Utilisateur> {
-  //   return await this.utilisateurRepository.save(createUtilisateurDto);
-  // }
->>>>>>> PersoYo
-
-  // .get pour trouver l'ensemble des utilisateurs contenus ds la table utilisateur
-  async findAll(): Promise<Utilisateur[]> {
-    return await this.utilisateurRepository.find();
+  // pour admin
+  async findAllUser(): Promise<Utilisateur[]> {
+    const userFound = await this.utilisateurRepository.find();
+    if (!userFound) {
+      throw new NotFoundException(`Utilisateur non trouvée`);
+    }
+    return userFound;
   }
 
   //.get pour trouver un utilisateur via son ID
@@ -69,76 +49,37 @@ export class UtilisateurService {
     return utilisateurFound;
   }
 
-  //Récupérer toutes les tâches créées par un user
-
-  // async findAllTaskCreatedByUser(utilisateur: Utilisateur): Promise<Tache[]> {
-  //   //vérifier si userId correspond bien à un utilisateur
-  //   const allTaches = await this.tacheRepository.find({});
-  //   return allTaches;
-  // }
-
-  // async findAllTagCreatedByUser(userId: string) {
-  // vérifier si userId correspond bien à un utilisateur
-  // const allTaches = await this.tacheRepository.find({
-  //   user_: {
-  //     id: userId,
-  //   }
-  // });
-  //   const allTags = await this.tacheRepository
-  //     .createQueryBuilder('tag')
-  //     .leftJoinAndSelect('tag.user_', 'user')
-  //     .leftJoinAndSelect('tache.user_', 'tacheuser')
-  //     .where('user.id = :id', { id: userId })
-  //     .getMany();
-  //   console.log('taches créées par le user : ', allTaches);
-  //   return allTaches;
-  // }
-
   //.patch pour modifier l'ensemble ou un élément de l'interface
   async update(
-    id: string,
+    idValue: string,
     updateUtilisateurDto: UpdateUtilisateurDto,
-  ): Promise<Utilisateur | string> {
-    const noExist = await this.utilisateurRepository.findOneBy({ id }); //!!!Ne prend pas erreur en compte ?????
-    if (!noExist) {
-      throw new NotFoundException(
-        `L'utilisateur n'a pas été trouvé avec l'id:${id}`,
-      );
-    }
+  ): Promise<Utilisateur> {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: id,
+      id: idValue,
     });
-    (upDateUtilisateur.email = updateUtilisateurDto.email),
-      (upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo),
-      (upDateUtilisateur.password = updateUtilisateurDto.password),
-      (upDateUtilisateur.picture = updateUtilisateurDto.picture);
+    const salt = await bcrypt.genSalt();
+    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
+    upDateUtilisateur.password = hashedPassword;
+    upDateUtilisateur.email = updateUtilisateurDto.email;
+    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+    hashedPassword = updateUtilisateurDto.password;
+    upDateUtilisateur.picture = updateUtilisateurDto.picture;
+
     return await this.utilisateurRepository.save(upDateUtilisateur);
   }
 
-  //.delete pour supprimer un utilisateur via son id
-<<<<<<< HEAD
-  async remove(id: string): Promise<string> {
-    const result = await this.utilisateurRepository.delete({ id });
-    if (result.affected === 0) {
-      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-    }
-    return `This action removes a #${id} utilisateur`;
-  }
-  
-=======
-  //!!!!NE FONCTIONNE PAS!!!!
-  // async remove(
-  //   id: string,
-  //   utilisateur: Utilisateur,
-  // ): Promise<Utilisateur | string> {
+  // .delete pour supprimer un utilisateur via son id
+  // !!!!NE FONCTIONNE PAS!!!!
+  // async remove(pseudo: string): Promise<Utilisateur | string> {
   //   const result = await this.utilisateurRepository.delete({
-  //     id,
-  //     user_: utilisateur,
+  //     pseudo,
   //   });
   //   if (result.affected === 0) {
-  //     throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
+  //     throw new NotFoundException(
+  //       `pas d'utilisateur trouvé avec l'id:${pseudo}`,
+  //     );
   //   }
-  //   return `Cette action a supprmé l'utilisateur #${id}`;
+  //   return `Cette action a supprmé l'utilisateur #${pseudo}`;
   // }
 >>>>>>> PersoYo
 }

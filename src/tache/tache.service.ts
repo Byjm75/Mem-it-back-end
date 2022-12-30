@@ -4,6 +4,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
+import * as bcrypt from 'bcrypt';
 import { Tache } from './entities/tache.entity';
 
 @Injectable()
@@ -11,6 +12,8 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
+    @InjectRepository(Utilisateur)
+    private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
 
   async create(
@@ -31,8 +34,15 @@ export class TacheService {
     // Cette action crée un nouveau mémo;
   }
 
-  async findAll(): Promise<Tache[]> {
-    return await this.TacheRepository.find();
+  // les tâches créées par un utilsateur
+  async findAllByUser(utilisateur: Utilisateur): Promise<Tache[]> {
+    const taskFound = await this.TacheRepository.findBy({
+      user_: utilisateur,
+    });
+    if (!taskFound) {
+      throw new NotFoundException(`Tâche non trouvée`);
+    }
+    return taskFound;
   }
 
   async findOne(title: string, utilisateur: Utilisateur): Promise<Tache> {
@@ -68,18 +78,6 @@ export class TacheService {
       (tacheToUpdate.url = updateTacheDto.url);
     return await this.TacheRepository.save(tacheToUpdate);
   }
-
-  // refaire la méthode standard pour récupérer toutes les taches créées
-  // async findAll(id: string, utilisateur: Utilisateur): Promise<Tache[]> {
-  //   const allTaches = await this.TacheRepository.find({
-  //     id: idValue,
-  //     user_: utilisateur,
-  //   });
-  //   return await this.TacheRepository.find(id);
-  // Cette action presente tout les mémos
-  //}
-
-  //  }
 
   async remove(
     title: string,

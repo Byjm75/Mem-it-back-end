@@ -6,11 +6,12 @@ import { Utilisateur } from './entities/utilisateur.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Tache } from 'src/tache/entities/tache.entity';
+import { Tag } from 'src/tag/entities/tag.entity';
 
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forFeature([Utilisateur, Categorie, Tache]),
+    TypeOrmModule.forFeature([Utilisateur, Categorie, Tache, Tag]),
   ],
   controllers: [UtilisateurController],
   providers: [UtilisateurService],

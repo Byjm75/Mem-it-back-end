@@ -5,13 +5,9 @@ import { Tache } from './entities/tache.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { Categorie } from 'src/categorie/entities/categorie.entity';
 
 @Module({
-  imports: [
-    AuthModule,
-    TypeOrmModule.forFeature([Tache, Utilisateur, Categorie]),
-  ],
+  imports: [AuthModule, TypeOrmModule.forFeature([Tache, Utilisateur])],
   controllers: [TacheController],
   providers: [TacheService],
 })
