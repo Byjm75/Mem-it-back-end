@@ -4,6 +4,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
 import { UpdateTacheDto } from './dto/update-tache.dto';
+import * as bcrypt from 'bcrypt';
 import { Tache } from './entities/tache.entity';
 
 @Injectable()
@@ -11,6 +12,8 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
+    @InjectRepository(Utilisateur)
+    private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
 
   async create(
@@ -31,8 +34,15 @@ export class TacheService {
     // Cette action crée un nouveau mémo;
   }
 
-  async findAll(): Promise<Tache[]> {
-    return await this.TacheRepository.find();
+  // les tâches créées par un utilsateur
+  async findAllByUser(utilisateur: Utilisateur): Promise<Tache[]> {
+    const taskFound = await this.TacheRepository.findBy({
+      user_: utilisateur,
+    });
+    if (!taskFound) {
+      throw new NotFoundException(`Tâche non trouvée`);
+    }
+    return taskFound;
   }
 
   async findOne(title: string, utilisateur: Utilisateur): Promise<Tache> {
@@ -47,11 +57,13 @@ export class TacheService {
   }
 
   async update(
+    title: string,
     updateTacheDto: UpdateTacheDto,
     utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    const { title } = updateTacheDto;
-    const noExist = await this.TacheRepository.findOneBy({ title });
+    const noExist = await this.TacheRepository.findOneBy({
+      title,
+    });
     if (!noExist) {
       throw new NotFoundException(`Tâche non trouvée avec le titre:${title}`);
     }
@@ -67,29 +79,17 @@ export class TacheService {
     return await this.TacheRepository.save(tacheToUpdate);
   }
 
-  // if (!tacheToUpdate) {
-  //   throw new NotFoundException(`Tâche non trouvé avec le titre:${title}`);
-  // }
-  // Cette action met à jour un mémo;
-
-  // refaire la méthode standard pour récupérer toutes les taches créées
-  // async findAll(id: string, utilisateur: Utilisateur): Promise<Tache[]> {
-  //   const allTaches = await this.TacheRepository.find({
-  //     id: idValue,
-  //     user_: utilisateur,
-  //   });
-  //   return await this.TacheRepository.find(id);
-  // Cette action presente tout les mémos
-  //}
-
-  //  }
-
-  async remove(id: string): Promise<string> {
-    const result = await this.TacheRepository.delete({ id });
+  async remove(
+    title: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tache | string> {
+    const result = await this.TacheRepository.delete({
+      title,
+      user_: utilisateur,
+    });
     if (result.affected === 0) {
-      throw new NotFoundException(`pas de bouquin avec l'id:${id}`);
+      throw new NotFoundException(`La tache:${title} n'a pas été trouvé`);
     }
-    return `This action removes a #${id} tache`;
-    // Cette action supprime un mémo;
+    return `Cette action entraine la suppresion de la tache:${title} `;
   }
 }

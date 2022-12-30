@@ -1,6 +1,12 @@
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Tache {
@@ -14,11 +20,14 @@ export class Tache {
   })
   title: string;
 
-  @Column({
-    nullable: true,
-    type: 'date',
-  })
-  date_creation: string;
+  @CreateDateColumn()
+  date_creation: Date;
+
+  // @Column({
+  //   nullable: true,
+  //   type: 'date',
+  // })
+  // date_creation: string;
 
   @Column({
     nullable: true,

@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -66,19 +67,29 @@ export class AuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async remove(id: string): Promise<Utilisateur | string> {
+    const result = await this.utilisateurRepository.delete({
+      id,
+    });
+    if (result.affected === 0) {
+      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
+    }
+    return `Cette action a supprmé l'utilisateur #${id}`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  // update(id: number, updateAuthDto: UpdateAuthDto) {
-  //   return `This action updates a #${id} auth`;
+  // findAll() {
+  //   return `This action returns all auth`;
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} auth`;
+  // }
+
+  // // update(id: number, updateAuthDto: UpdateAuthDto) {
+  // //   return `This action updates a #${id} auth`;
+  // // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} auth`;
+  // }
 }
