@@ -21,7 +21,7 @@ export class UtilisateurController {
   //Pour admin
   @Get()
   findAllUser(): Promise<Utilisateur[]> {
-    return this.utilisateurService.findAllUser();
+    return this.utilisateurService.findAll();
   }
 
   @Get(':id')
