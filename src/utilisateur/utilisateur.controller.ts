@@ -6,45 +6,40 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UtilisateurService } from './utilisateur.service';
-import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Utilisateur } from './entities/utilisateur.entity';
+import { GetUser } from 'src/auth/get-user.decorator';
 
 @Controller('utilisateur')
+@UseGuards(AuthGuard())
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService) {}
-
-  // @Post()
-  // create(@Body() createUtilisateurDto: CreateUtilisateurDto) {
-  //   return this.utilisateurService.create(createUtilisateurDto);
-  // }
-
+  //Pour admin
   @Get()
-  findAll() {
-    return this.utilisateurService.findAll();
+  findAllUser(): Promise<Utilisateur[]> {
+    return this.utilisateurService.findAllUser();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id?: string): Promise<Utilisateur> {
     return this.utilisateurService.findOne(id);
-  }
-
-  @Get('/taches/:id')
-  findAllTaskCreatedByUser(@Param('id') userId: string) {
-    return this.utilisateurService.findAllTaskCreatedByUser(userId);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateUtilisateurDto: UpdateUtilisateurDto,
-  ) {
+  ): Promise<Utilisateur | string> {
     return this.utilisateurService.update(id, updateUtilisateurDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.utilisateurService.remove(id);
-  }
+  //!!!!NE FONCTIONNE PAS!!!!
+  // @Delete(':pseudo')
+  // remove(@Param('pseudo') pseudo: string) {
+  //   return this.utilisateurService.remove(pseudo);
+  // }
 }

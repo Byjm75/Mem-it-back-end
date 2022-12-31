@@ -15,6 +15,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Tache } from './entities/tache.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
+import { title } from 'process';
 
 @Controller('tache')
 @UseGuards(AuthGuard())
@@ -31,13 +32,9 @@ export class TacheController {
   }
 
   @Get()
-  findAll(
-    @Param()
-    @GetUser()
-    Utilisateur: Utilisateur,
-  ): Promise<Tache[]> {
+  findAll(@GetUser() utilisateur: Utilisateur): Promise<Tache[]> {
     console.log(Tache);
-    return this.tacheService.findAll(Utilisateur);
+    return this.tacheService.findAll();
   }
 
   @Get(':title')
@@ -50,19 +47,19 @@ export class TacheController {
 
   @Patch(':title')
   update(
+    @Param('title') title: string,
     @Body() updateTacheDto: UpdateTacheDto,
-    @GetUser() utilisateur: Utilisateur,
+    utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    return this.tacheService.update(updateTacheDto, utilisateur);
+    return this.tacheService.update(title, updateTacheDto, utilisateur);
   }
 
-  // @Get()
-  // findAll(@GetUser() utilisateur: Utilisateur): Promise<Tache[]> {
-  //   return this.tacheService.findAll(utilisateur);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.tacheService.remove(id);
-  // }
+  @Delete(':title')
+  remove(
+    @Param('title') title: string,
+    @Body()
+    utilisateur: Utilisateur,
+  ) {
+    return this.tacheService.remove(title, utilisateur);
+  }
 }

@@ -8,7 +8,7 @@ import { Tag } from 'src/tag/entities/tag.entity';
 export class Utilisateur {
   //Je génére la clé primaire
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   //Je crée les colonnes
   @Column({
@@ -41,9 +41,8 @@ export class Utilisateur {
   categories: Categorie[];
 
   @OneToMany(() => Tache, (task) => task.user_)
-  user_: Tache;
+  taches: Tache[];
 
   @OneToMany(() => Tag, (userTag) => userTag.user)
-  tags: Tag;
-  hashedPassword: string;
+  tags: Tag[];
 }
