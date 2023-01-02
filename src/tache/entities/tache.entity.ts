@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -22,12 +24,6 @@ export class Tache {
 
   @CreateDateColumn()
   date_creation: Date;
-
-  // @Column({
-  //   nullable: true,
-  //   type: 'date',
-  // })
-  // date_creation: string;
 
   @Column({
     nullable: true,
@@ -56,4 +52,8 @@ export class Tache {
 
   @ManyToOne(() => Utilisateur, (user_) => user_.id, { nullable: false })
   user_: Utilisateur;
+
+  @ManyToMany(() => Utilisateur, { eager: true })
+  @JoinTable()
+  utilisateur: Utilisateur[];
 }

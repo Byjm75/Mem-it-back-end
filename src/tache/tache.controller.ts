@@ -41,7 +41,7 @@ export class TacheController {
   findOne(
     @Param('title') title: string,
     @GetUser() utilisateur: Utilisateur,
-  ): Promise<Tache> {
+  ): Promise<Tache | string> {
     return this.tacheService.findOne(title, utilisateur);
   }
 

@@ -36,9 +36,10 @@ export class CategorieController {
   }
 
   @Get()
-  findAll(): Promise<Categorie[]> {
-    console.log(Categorie);
-    return this.categorieService.findAll();
+  findAllCategoriesByUser(
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Categorie[]> {
+    return this.categorieService.findAllCategoriesByUser(utilisateur);
   }
 
   @Get(':title')

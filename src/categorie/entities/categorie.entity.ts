@@ -3,6 +3,8 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -28,9 +30,18 @@ export class Categorie {
   @Column({ default: false, nullable: false })
   favoris: boolean;
 
-  @ManyToOne(() => Utilisateur, (user) => user.categories, { nullable: false }) //Cela permet de rendre nullable la clé primaire, ici user_id
+  @ManyToOne(() => Utilisateur, (user) => user.categories, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  }) //Cela permet de rendre nullable la clé primaire, ici user_id
   user_: Utilisateur;
 
-  @OneToMany(() => Tache, (taches) => taches.categorie_)
+  @OneToMany(() => Tache, (taches) => taches.categorie_, {
+    onDelete: 'CASCADE',
+  })
   taches: Tache[];
+
+  // @ManyToMany(() => Utilisateur, { eager: true })
+  // @JoinTable()
+  // utilisateur: Utilisateur[];
 }

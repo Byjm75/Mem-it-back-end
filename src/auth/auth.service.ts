@@ -12,9 +12,16 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
+  // update(
+  //   id: string,
+  //   updateUserDto: UpdateUserDto,
+  // ): Promise<string | Utilisateur> {
+  //   throw new Error('Method not implemented.');
+  // }
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
@@ -22,7 +29,7 @@ export class AuthService {
   ) {}
 
   async register(createAuthDto: CreateAuthDto) {
-    const { email, pseudo, password } = createAuthDto;
+    const { email, pseudo, password, picture } = createAuthDto;
 
     // hashage du mot de passe
     const salt = await bcrypt.genSalt();
@@ -49,6 +56,25 @@ export class AuthService {
       }
     }
   }
+  async update(
+    idValue: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Utilisateur> {
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+      id: idValue,
+    });
+    const { email, pseudo, password, picture } = updateUserDto;
+    const salt = await bcrypt.genSalt();
+    let hashedPassword = await bcrypt.hash(password, salt);
+    if (upDateUtilisateur) {
+      upDateUtilisateur.email = updateUserDto.email;
+      (upDateUtilisateur.pseudo = updateUserDto.pseudo),
+        (upDateUtilisateur.password = hashedPassword),
+        (upDateUtilisateur.picture = updateUserDto.picture);
+    }
+
+    return await this.utilisateurRepository.save(upDateUtilisateur);
+  }
 
   async login(loginDto: LoginDto) {
     const { pseudo, password } = loginDto;
@@ -65,16 +91,6 @@ export class AuthService {
         'Ces identifiants ne sont pas bons, déso...',
       );
     }
-  }
-
-  async remove(id: string): Promise<Utilisateur | string> {
-    const result = await this.utilisateurRepository.delete({
-      id,
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-    }
-    return `Cette action a supprmé l'utilisateur #${id}`;
   }
 
   // findAll() {

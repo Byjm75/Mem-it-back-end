@@ -11,7 +11,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Entity()
 export class Tag {
-  [x: string]: any;
+  // [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
