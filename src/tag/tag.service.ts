@@ -8,6 +8,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Injectable()
 export class TagService {
+  utilisateurRepository: Utilisateur[] | PromiseLike<Utilisateur[]>;
   constructor(
     @InjectRepository(Tag)
     private TagRepository: Repository<Tag>,
@@ -18,20 +19,29 @@ export class TagService {
     utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     const { title } = createTagDto;
-    const existAlready = await this.TagRepository.findOneBy({ title });
+    const existAlready = await this.TagRepository.findBy({
+      title,
+      userId: utilisateur,
+    });
     console.log('Title Existtttttttttt', existAlready);
-    if (existAlready) {
-      return `Vous avez déja crée la tache avec le titre:${title}`;
+    if (existAlready.length > 0) {
+      return `Vous avez déja crée le tag avec le titre:${title} ${utilisateur}`;
     }
-    const newTag = this.TagRepository.create({
+    const newTag = await this.TagRepository.create({
       ...createTagDto,
       userId: utilisateur,
     });
     return await this.TagRepository.save(newTag);
   }
 
-  async findAll(): Promise<Tag[]> {
-    return await this.TagRepository.find();
+  async findAllByUser(utilisateur: Utilisateur): Promise<Tag[]> {
+    const tagFound = await this.TagRepository.findBy({
+      userId: utilisateur,
+    });
+    if (!tagFound) {
+      throw new NotFoundException(`Tag non trouvé`);
+    }
+    return tagFound;
   }
 
   async findOne(

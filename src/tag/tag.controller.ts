@@ -31,12 +31,16 @@ export class TagController {
   }
 
   @Get()
-  findAll(): Promise<Tag[]> {
-    return this.tagService.findAll();
+  findAllByUser(@GetUser() utilisateur: Utilisateur): Promise<Tag[]> {
+    console.log(Tag);
+    return this.tagService.findAllByUser(utilisateur);
   }
 
   @Get(':title')
-  findOne(@Param('title') title: string, @GetUser() utilisateur: Utilisateur) {
+  findOne(
+    @Param('title') title: string,
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
     return this.tagService.findOne(title, utilisateur);
   }
 

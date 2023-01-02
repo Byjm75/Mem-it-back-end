@@ -9,10 +9,7 @@ import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Tache } from 'src/tache/entities/tache.entity';
 
 @Module({
-  imports: [
-    AuthModule,
-    TypeOrmModule.forFeature([Tag, Utilisateur, Categorie, Tache]),
-  ],
+  imports: [AuthModule, TypeOrmModule.forFeature([Tag, Utilisateur])],
   controllers: [TagController],
   providers: [TagService],
 })
