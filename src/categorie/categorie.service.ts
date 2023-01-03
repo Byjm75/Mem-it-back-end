@@ -48,50 +48,69 @@ export class CategorieService {
   }
 
   async findOne(
-    title: string,
+    idValue: string,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     const categorieFound = await this.categorieRepository.findOneBy({
-      title,
+      id: idValue,
       user_: utilisateur,
     });
     if (!categorieFound) {
       throw new NotFoundException(
-        `Categorie non trouvé avec le titre:${title}`,
+        `Categorie non trouvé avec le titre:${idValue}`,
       );
     }
     return categorieFound;
   }
 
   async update(
-    title: string,
+    idValue: string,
     updateCategorieDto: UpdateCategorieDto,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     const upDateCategorie = await this.categorieRepository.findOneBy({
-      title,
+      id: idValue,
       user_: utilisateur,
     });
-    (upDateCategorie.title = updateCategorieDto.title),
-      (upDateCategorie.image = updateCategorieDto.image),
-      (upDateCategorie.favoris = updateCategorieDto.favoris);
+    console.log(upDateCategorie);
+    const { title, image, favoris } = updateCategorieDto;
+    const titleExist = await this.categorieRepository.findBy({
+      title,
+    });
+    console.log(titleExist);
+    if (titleExist.length > 0) {
+      throw new Error('Le nom de la catégorie existe déjà');
+    }
+    try {
+      if (updateCategorieDto.title) {
+        upDateCategorie.title = updateCategorieDto.title;
+      }
+      if (updateCategorieDto.image) {
+        upDateCategorie.image = updateCategorieDto.image;
+      }
+      if (updateCategorieDto.favoris) {
+        upDateCategorie.favoris = updateCategorieDto.favoris;
+      }
 
-    return await this.categorieRepository.save(upDateCategorie);
+      return await this.categorieRepository.save(upDateCategorie);
+    } catch {
+      throw new Error('autre erreur categéorie');
+    }
   }
 
   async remove(
-    title: string,
+    idValue: string,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     const result = await this.categorieRepository.delete({
       user_: utilisateur,
-      title,
+      id: idValue,
     });
     if (result.affected === 0) {
       throw new NotFoundException(
-        `Categorie non trouvé avec le titre:${title}`,
+        `Categorie non trouvé avec le titre:${idValue}`,
       );
     }
-    return `Cette action entraine la suppresion de la catégorie:${title}`;
+    return `Cette action entraine la suppresion de la catégorie:${idValue}`;
   }
 }

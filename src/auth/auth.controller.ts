@@ -34,4 +34,9 @@ export class AuthController {
   ): Promise<Utilisateur | string> {
     return this.authService.update(id, updateUserDto);
   }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.authService.remove(id);
+  }
 }

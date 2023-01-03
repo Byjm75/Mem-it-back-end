@@ -40,8 +40,4 @@ export class Categorie {
     onDelete: 'CASCADE',
   })
   taches: Tache[];
-
-  // @ManyToMany(() => Utilisateur, { eager: true })
-  // @JoinTable()
-  // utilisateur: Utilisateur[];
 }
