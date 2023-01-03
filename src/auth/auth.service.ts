@@ -16,12 +16,6 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
-  // update(
-  //   id: string,
-  //   updateUserDto: UpdateUserDto,
-  // ): Promise<string | Utilisateur> {
-  //   throw new Error('Method not implemented.');
-  // }
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
@@ -40,12 +34,21 @@ export class AuthService {
       pseudo,
       email,
       password: hashedPassword,
+      picture,
     });
-
+    const pseudoExistAlready = await this.utilisateurRepository.findBy({
+      pseudo,
+    });
+    const mailExistAlready = await this.utilisateurRepository.findBy({
+      email,
+    });
+    if (pseudoExistAlready.length > 0) {
+      return `L'utilisateur existe déja avec ce pseudo:${pseudo}`;
+    } else if (mailExistAlready.length > 0) {
+      return `L'utilisateur existe déja avec ce mail:${email}`;
+    }
     try {
-      // enregistrement de l'entité user
       const createdUser = await this.utilisateurRepository.save(user);
-      //delete createdUser.password;
       return createdUser;
     } catch (error) {
       // gestion des erreurs
@@ -56,34 +59,14 @@ export class AuthService {
       }
     }
   }
-  async update(
-    idValue: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,
-    });
-    const { email, pseudo, password, picture } = updateUserDto;
-    const salt = await bcrypt.genSalt();
-    let hashedPassword = await bcrypt.hash(password, salt);
-    if (upDateUtilisateur) {
-      upDateUtilisateur.email = updateUserDto.email;
-      (upDateUtilisateur.pseudo = updateUserDto.pseudo),
-        (upDateUtilisateur.password = hashedPassword),
-        (upDateUtilisateur.picture = updateUserDto.picture);
-    }
-
-    return await this.utilisateurRepository.save(upDateUtilisateur);
-  }
-
   async login(loginDto: LoginDto) {
-    const { pseudo, password } = loginDto;
+    const { email, password } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
-      pseudo,
+      email,
     });
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
-      const payload = { pseudo };
+      const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -93,19 +76,55 @@ export class AuthService {
     }
   }
 
-  // findAll() {
-  //   return `This action returns all auth`;
-  // }
+  async update(
+    idValue: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Utilisateur | string> {
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+      id: idValue,
+    });
+    const { email, pseudo, password, picture } = updateUserDto;
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} auth`;
-  // }
+    const pseudoExistAlready = await this.utilisateurRepository.findBy({
+      pseudo,
+    });
+    const mailExistAlready = await this.utilisateurRepository.findBy({
+      email,
+    });
+    if (pseudoExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
+    } else if (mailExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
+    }
+    console.log(updateUserDto.pseudo);
+    try {
+      if (updateUserDto.email) {
+        upDateUtilisateur.email = updateUserDto.email;
+      }
+      if (updateUserDto.pseudo) {
+        upDateUtilisateur.pseudo = updateUserDto.pseudo;
+      }
+      if (updateUserDto.picture) {
+        upDateUtilisateur.picture = updateUserDto.picture;
+      }
+      if (updateUserDto.password) {
+        const salt = await bcrypt.genSalt();
+        let hashedPassword = await bcrypt.hash(password, salt);
+        upDateUtilisateur.password = hashedPassword;
+      }
 
-  // // update(id: number, updateAuthDto: UpdateAuthDto) {
-  // //   return `This action updates a #${id} auth`;
-  // // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} auth`;
-  // }
+      return await this.utilisateurRepository.save(upDateUtilisateur);
+    } catch {
+      throw new Error('à definir');
+    }
+  }
+  async remove(id: string): Promise<Utilisateur | string> {
+    const result = await this.utilisateurRepository.delete({
+      id,
+    });
+    if (result.affected === 0) {
+      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
+    }
+    return `Cette action a supprmé l'utilisateur #${id}`;
+  }
 }

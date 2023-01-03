@@ -67,15 +67,6 @@ export class UtilisateurService {
 
   //   return await this.utilisateurRepository.save(upDateUtilisateur);
   // }
-  async remove(id: string): Promise<Utilisateur | string> {
-    const result = await this.utilisateurRepository.delete({
-      id,
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-    }
-    return `Cette action a supprmé l'utilisateur #${id}`;
-  }
 
   // .delete pour supprimer un utilisateur via son id
   // !!!!NE FONCTIONNE PAS!!!!
