@@ -10,7 +10,6 @@ import { UtilisateurModule } from 'src/utilisateur/utilisateur.module';
 
 @Module({
   imports: [
-    forwardRef(() => Utilisateur),
     TypeOrmModule.forFeature([Utilisateur]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

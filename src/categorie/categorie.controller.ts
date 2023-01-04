@@ -15,7 +15,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
-import { title } from 'process';
 @Controller('categorie')
 @UseGuards(AuthGuard())
 export class CategorieController {
@@ -26,7 +25,7 @@ export class CategorieController {
     @Body() createCategorieDto: CreateCategorieDto,
     @GetUser() utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    console.log(Utilisateur);
+    console.log('mais qui es tu ? ', utilisateur.email);
     return this.categorieService.create(createCategorieDto, utilisateur);
   }
 

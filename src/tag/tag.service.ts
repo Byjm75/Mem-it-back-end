@@ -8,7 +8,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Injectable()
 export class TagService {
-  utilisateurRepository: Utilisateur[] | PromiseLike<Utilisateur[]>;
   constructor(
     @InjectRepository(Tag)
     private TagRepository: Repository<Tag>,
@@ -45,43 +44,58 @@ export class TagService {
   }
 
   async findOne(
-    title: string,
+    idValue: string,
     utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     const tagFound = await this.TagRepository.findOneBy({
-      title,
+      id: idValue,
       userId: utilisateur,
     });
     if (!tagFound) {
-      throw new NotFoundException(`aucun tag trouvé avec le titre:${title}`);
+      throw new NotFoundException(`aucun tag trouvé avec le titre:${idValue}`);
     }
     return tagFound;
   }
 
   async update(
-    title: string,
+    idValue: string,
     updateTagDto: UpdateTagDto,
     utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     const upDateTag = await this.TagRepository.findOneBy({
-      title,
+      id: idValue,
       userId: utilisateur,
     });
-    upDateTag.title = updateTagDto.title;
-
-    return await this.TagRepository.save(upDateTag);
+    const { title } = updateTagDto;
+    const titleExist = await this.TagRepository.findBy({
+      title,
+    });
+    if (titleExist.length > 0) {
+      throw new Error(`La catégorie ${title}existe déjà`);
+    }
+    try {
+      if (updateTagDto.title) {
+        upDateTag.title = updateTagDto.title;
+      }
+      return await this.TagRepository.save(upDateTag);
+    } catch {
+      throw new Error('autre erreur categéorie');
+    }
   }
 
-  async remove(title: string, utilisateur: Utilisateur): Promise<Tag | string> {
+  async remove(
+    idValue: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
     const result = await this.TagRepository.delete({
       userId: utilisateur,
-      title,
+      id: idValue,
     });
     {
       if (result.affected === 0) {
-        throw new NotFoundException(`aucun tag trouvé le titre:${title}`);
+        throw new NotFoundException(`aucun tag trouvé le titre:${idValue}`);
       }
-      return `le tag avec le tire:${title} a été supprimé`;
+      return `le tag avec le tire:${idValue} a été supprimé`;
     }
   }
 }
