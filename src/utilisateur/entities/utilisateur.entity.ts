@@ -37,12 +37,14 @@ export class Utilisateur {
   picture?: string;
 
   //Je relis les tables suivant leurs cardinalités et par les clés étrangéres.
-  @OneToMany(() => Categorie, (categories) => categories.user_)
+  @OneToMany(() => Categorie, (categories) => categories.user_, {
+    onDelete: 'CASCADE',
+  })
   categories: Categorie[];
 
-  @OneToMany(() => Tache, (task) => task.user_)
+  @OneToMany(() => Tache, (task) => task.user_, { onDelete: 'CASCADE' })
   taches: Tache[];
 
-  @OneToMany(() => Tag, (userTag) => userTag.user)
+  @OneToMany(() => Tag, (userTag) => userTag.userId, { onDelete: 'CASCADE' })
   tags: Tag[];
 }

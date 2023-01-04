@@ -6,9 +6,9 @@ async function bootstrap() {
   app.setGlobalPrefix('/api');
   app.enableCors({
     origin: '*',
-    methods: 'GET, PUT, POST, DELETE',
+    methods: 'GET,PUT,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
   });
-  await app.listen(8085);
+  await app.listen(8080);
 }
 bootstrap();

@@ -37,23 +37,23 @@ export class UtilisateurService {
   }
 
   //.patch pour modifier l'ensemble ou un élément de l'interface
-  async update(
-    idValue: string,
-    updateUtilisateurDto: UpdateUtilisateurDto,
-  ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,
-    });
-    const salt = await bcrypt.genSalt();
-    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
-    upDateUtilisateur.password = hashedPassword;
-    upDateUtilisateur.email = updateUtilisateurDto.email;
-    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
-    hashedPassword = updateUtilisateurDto.password;
-    upDateUtilisateur.picture = updateUtilisateurDto.picture;
+  // async update(
+  //   idValue: string,
+  //   updateUtilisateurDto: UpdateUtilisateurDto,
+  // ): Promise<Utilisateur> {
+  //   const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+  //     id: idValue,
+  //   });
+  //   const salt = await bcrypt.genSalt();
+  //   let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
+  //   upDateUtilisateur.password = hashedPassword;
+  //   upDateUtilisateur.email = updateUtilisateurDto.email;
+  //   upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+  //   hashedPassword = updateUtilisateurDto.password;
+  //   upDateUtilisateur.picture = updateUtilisateurDto.picture;
 
-    return await this.utilisateurRepository.save(upDateUtilisateur);
-  }
+  //   return await this.utilisateurRepository.save(upDateUtilisateur);
+  // }
 
   // .delete pour supprimer un utilisateur via son id
   // !!!!NE FONCTIONNE PAS!!!!

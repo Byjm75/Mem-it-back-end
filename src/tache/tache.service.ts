@@ -12,19 +12,20 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
-    @InjectRepository(Utilisateur)
-    private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
 
   async create(
     createTacheDto: CreateTacheDto,
     utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    const { title, date_creation } = createTacheDto;
-    const existAlready = await this.TacheRepository.findOneBy({ title });
+    const { title } = createTacheDto;
+    const existAlready = await this.TacheRepository.findBy({
+      title,
+      user_: utilisateur,
+    });
     console.log('Tache Existtttttttttt', existAlready);
-    if (existAlready) {
-      return `Vous avez déja crée la Tâche avec le titre:${title} ${date_creation}`;
+    if (existAlready.length > 0) {
+      return `Vous avez déja crée la Tâche avec le titre:${title} ${utilisateur}`;
     }
     const newTache = await this.TacheRepository.create({
       ...createTacheDto,
@@ -45,7 +46,10 @@ export class TacheService {
     return taskFound;
   }
 
-  async findOne(title: string, utilisateur: Utilisateur): Promise<Tache> {
+  async findOne(
+    title: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tache | string> {
     const taskFound = await this.TacheRepository.findOneBy({
       title,
       user_: utilisateur,
@@ -63,6 +67,7 @@ export class TacheService {
   ): Promise<Tache | string> {
     const noExist = await this.TacheRepository.findOneBy({
       title,
+      user_: utilisateur,
     });
     if (!noExist) {
       throw new NotFoundException(`Tâche non trouvée avec le titre:${title}`);
@@ -76,6 +81,7 @@ export class TacheService {
       (tacheToUpdate.image = updateTacheDto.image),
       (tacheToUpdate.title = updateTacheDto.title),
       (tacheToUpdate.url = updateTacheDto.url);
+
     return await this.TacheRepository.save(tacheToUpdate);
   }
 

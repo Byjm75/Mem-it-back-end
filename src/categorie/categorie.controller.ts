@@ -14,7 +14,7 @@ import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { title } from 'process';
 @Controller('categorie')
 @UseGuards(AuthGuard())
 export class CategorieController {
@@ -30,34 +30,35 @@ export class CategorieController {
   }
 
   @Get()
-  findAll(): Promise<Categorie[]> {
-    console.log(Categorie);
-    return this.categorieService.findAll();
+  findAllCategoriesByUser(
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Categorie[]> {
+    return this.categorieService.findAllCategoriesByUser(utilisateur);
   }
 
-  @Get(':title')
+  @Get(':id')
   findOne(
-    @Param('title') title: string,
+    @Param('id') id: string,
     @GetUser() utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    return this.categorieService.findOne(title, utilisateur);
+    return this.categorieService.findOne(id, utilisateur);
   }
 
-  @Patch(':title')
+  @Patch(':id')
   update(
-    @Param('title') title: string,
+    @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    return this.categorieService.update(title, updateCategorieDto, utilisateur);
+    return this.categorieService.update(id, updateCategorieDto, utilisateur);
   }
 
-  @Delete(':title')
+  @Delete(':id')
   remove(
-    @Param('title') title: string,
+    @Param('id') id: string,
     @Body()
     utilisateur: Utilisateur,
   ) {
-    return this.categorieService.remove(title, utilisateur);
+    return this.categorieService.remove(id, utilisateur);
   }
 }

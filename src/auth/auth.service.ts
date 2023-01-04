@@ -12,6 +12,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
   ) {}
 
   async register(createAuthDto: CreateAuthDto) {
-    const { email, pseudo, password } = createAuthDto;
+    const { email, pseudo, password, picture } = createAuthDto;
 
     // hashage du mot de passe
     const salt = await bcrypt.genSalt();
@@ -33,12 +34,21 @@ export class AuthService {
       pseudo,
       email,
       password: hashedPassword,
+      picture,
     });
-
+    const pseudoExistAlready = await this.utilisateurRepository.findBy({
+      pseudo,
+    });
+    const mailExistAlready = await this.utilisateurRepository.findBy({
+      email,
+    });
+    if (pseudoExistAlready.length > 0) {
+      return `L'utilisateur existe déja avec ce pseudo:${pseudo}`;
+    } else if (mailExistAlready.length > 0) {
+      return `L'utilisateur existe déja avec ce mail:${email}`;
+    }
     try {
-      // enregistrement de l'entité user
       const createdUser = await this.utilisateurRepository.save(user);
-      //delete createdUser.password;
       return createdUser;
     } catch (error) {
       // gestion des erreurs
@@ -49,7 +59,6 @@ export class AuthService {
       }
     }
   }
-
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
@@ -67,6 +76,48 @@ export class AuthService {
     }
   }
 
+  async update(
+    idValue: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Utilisateur | string> {
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+      id: idValue,
+    });
+    const { email, pseudo, password, picture } = updateUserDto;
+
+    const pseudoExistAlready = await this.utilisateurRepository.findBy({
+      pseudo,
+    });
+    const mailExistAlready = await this.utilisateurRepository.findBy({
+      email,
+    });
+    if (pseudoExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
+    } else if (mailExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
+    }
+    console.log(updateUserDto.pseudo);
+    try {
+      if (updateUserDto.email) {
+        upDateUtilisateur.email = updateUserDto.email;
+      }
+      if (updateUserDto.pseudo) {
+        upDateUtilisateur.pseudo = updateUserDto.pseudo;
+      }
+      if (updateUserDto.picture) {
+        upDateUtilisateur.picture = updateUserDto.picture;
+      }
+      if (updateUserDto.password) {
+        const salt = await bcrypt.genSalt();
+        let hashedPassword = await bcrypt.hash(password, salt);
+        upDateUtilisateur.password = hashedPassword;
+      }
+
+      return await this.utilisateurRepository.save(upDateUtilisateur);
+    } catch {
+      throw new Error('à definir');
+    }
+  }
   async remove(id: string): Promise<Utilisateur | string> {
     const result = await this.utilisateurRepository.delete({
       id,
@@ -76,20 +127,4 @@ export class AuthService {
     }
     return `Cette action a supprmé l'utilisateur #${id}`;
   }
-
-  // findAll() {
-  //   return `This action returns all auth`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} auth`;
-  // }
-
-  // // update(id: number, updateAuthDto: UpdateAuthDto) {
-  // //   return `This action updates a #${id} auth`;
-  // // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} auth`;
-  // }
 }
