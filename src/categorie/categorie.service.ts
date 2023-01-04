@@ -8,7 +8,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Injectable()
 export class CategorieService {
-  utilisateurRepository: Utilisateur[] | PromiseLike<Utilisateur[]>;
   constructor(
     @InjectRepository(Categorie)
     private categorieRepository: Repository<Categorie>,
@@ -19,11 +18,12 @@ export class CategorieService {
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     const { title } = createCategorieDto;
+    console.log('je veux tout', utilisateur.email);
     const existAlready = await this.categorieRepository.findBy({
       title,
       user_: utilisateur,
     });
-    console.log('Tache Existtttttttttt', existAlready);
+    console.log('catégorie doublon trouvée', existAlready);
     if (existAlready.length > 0) {
       return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
     }
@@ -32,9 +32,8 @@ export class CategorieService {
       user_: utilisateur,
     });
     return await this.categorieRepository.save(newCategorie);
-    // Cette action crée un nouveau mémo;
   }
-
+  // les catégories créées par un utilsateur
   async findAllCategoriesByUser(
     utilisateur: Utilisateur,
   ): Promise<Categorie[]> {
@@ -79,7 +78,7 @@ export class CategorieService {
     });
     console.log(titleExist);
     if (titleExist.length > 0) {
-      throw new Error('Le nom de la catégorie existe déjà');
+      throw new Error(`La catégorie ${title}existe déjà`);
     }
     try {
       if (updateCategorieDto.title) {
@@ -91,7 +90,6 @@ export class CategorieService {
       if (updateCategorieDto.favoris) {
         upDateCategorie.favoris = updateCategorieDto.favoris;
       }
-
       return await this.categorieRepository.save(upDateCategorie);
     } catch {
       throw new Error('autre erreur categéorie');
