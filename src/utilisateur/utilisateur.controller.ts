@@ -29,17 +29,4 @@ export class UtilisateurController {
     return this.utilisateurService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUtilisateurDto: UpdateUtilisateurDto,
-  ): Promise<Utilisateur | string> {
-    return this.utilisateurService.update(id, updateUtilisateurDto);
-  }
-
-  //!!!!NE FONCTIONNE PAS!!!!
-  // @Delete(':pseudo')
-  // remove(@Param('pseudo') pseudo: string) {
-  //   return this.utilisateurService.remove(pseudo);
-  // }
 }

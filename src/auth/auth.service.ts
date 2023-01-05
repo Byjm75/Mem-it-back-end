@@ -12,6 +12,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
+import { UpdateUtilisateurDto } from 'src/utilisateur/dto/update-utilisateur.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,13 +52,13 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const { pseudo, password } = loginDto;
+    const { email, password } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
-      pseudo,
+      email,
     });
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
-      const payload = { pseudo };
+      const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -66,10 +67,25 @@ export class AuthService {
       );
     }
   }
+  
+  //.patch pour modifier l'ensemble ou un élément de l'interface
+  async update(
+    idValue: string,
+    updateUtilisateurDto: UpdateUtilisateurDto,
+  ): Promise<Utilisateur> {
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+      id: idValue,
+    });
+    const salt = await bcrypt.genSalt();
+    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
+    upDateUtilisateur.password = hashedPassword;
+    upDateUtilisateur.email = updateUtilisateurDto.email;
+    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+    hashedPassword = updateUtilisateurDto.password;
+    upDateUtilisateur.picture = updateUtilisateurDto.picture;
 
-  // async update(id: number, updateAuthDto: UpdateAuthDto) {
-  //   return `This action updates a #${id} auth`;
-  // }
+    return await this.utilisateurRepository.save(upDateUtilisateur);
+  }
 
   async remove(id: string): Promise<Utilisateur | string> {
     const result = await this.utilisateurRepository.delete({
@@ -80,20 +96,4 @@ export class AuthService {
     }
     return `Cette action a supprmé l'utilisateur #${id}`;
   }
-
-  // findAll() {
-  //   return `This action returns all auth`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} auth`;
-  // }
-
-  // // update(id: number, updateAuthDto: UpdateAuthDto) {
-  // //   return `This action updates a #${id} auth`;
-  // // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} auth`;
-  // }
 }
