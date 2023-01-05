@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -45,9 +47,18 @@ export class Tache {
   })
   url: string;
 
-  @ManyToOne(() => Categorie, (categories) => categories.taches)
+  @ManyToOne(() => Categorie, (categories) => categories.taches, {
+    onDelete: 'CASCADE',
+  })
   categorie_: Categorie;
 
-  @ManyToOne(() => Utilisateur, (user_) => user_.id, { eager: true })
+  @ManyToOne(() => Utilisateur, (user_) => user_.id, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   user_: Utilisateur;
+
+  @ManyToMany(() => Utilisateur, { eager: true })
+  @JoinTable()
+  utilisateur: Utilisateur[];
 }
