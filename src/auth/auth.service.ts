@@ -61,7 +61,7 @@ export class AuthService {
 
   //Connexion d'un utilisateur
   async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
+    const { pseudo,email, password } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
       email,
     });
