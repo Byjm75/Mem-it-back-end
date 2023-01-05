@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { UpdateUtilisateurDto } from 'src/utilisateur/dto/update-utilisateur.dto';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
@@ -15,6 +17,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Controller('auth')
 export class AuthController {
+  utilisateurService: any;
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
@@ -27,12 +30,11 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Patch('/update/:id')
+  @Patch('/update')
   update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUtilisateurDto: UpdateUtilisateurDto,
   ): Promise<Utilisateur | string> {
-    return this.authService.update(id, updateUserDto);
+    return this.utilisateurService.update(updateUtilisateurDto);
   }
 
   @Delete(':id')

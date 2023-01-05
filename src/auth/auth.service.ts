@@ -12,7 +12,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
-import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateUtilisateurDto } from 'src/utilisateur/dto/update-utilisateur.dto';
 
 @Injectable()
 export class AuthService {
@@ -61,7 +61,7 @@ export class AuthService {
 
   //Connexion d'un utilisateur
   async login(loginDto: LoginDto) {
-    const { pseudo, email, password } = loginDto;
+    const { email, password } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
       email,
     });
@@ -71,7 +71,6 @@ export class AuthService {
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
       const payload = { email };
-      console.log('je veux ton mail', email);
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -80,12 +79,26 @@ export class AuthService {
       );
     }
   }
+  
+  //.patch pour modifier l'ensemble ou un élément de l'interface
+  async update(
+    idValue: string,
+    updateUtilisateurDto: UpdateUtilisateurDto,
+  ): Promise<Utilisateur> {
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
+      id: idValue,
+    });
+    const salt = await bcrypt.genSalt();
+    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
+    upDateUtilisateur.password = hashedPassword;
+    upDateUtilisateur.email = updateUtilisateurDto.email;
+    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
+    hashedPassword = updateUtilisateurDto.password;
+    upDateUtilisateur.picture = updateUtilisateurDto.picture;
 
-  findAll() {
-    return `This action returns all auth`;
+    return await this.utilisateurRepository.save(upDateUtilisateur);
   }
 
-  //Suppression d'un compte utilisateur
   async remove(id: string): Promise<Utilisateur | string> {
     const result = await this.utilisateurRepository.delete({
       id,

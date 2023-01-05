@@ -1,11 +1,10 @@
-
-
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository, Table } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 
 @Injectable()
 export class UtilisateurService {
@@ -14,13 +13,13 @@ export class UtilisateurService {
     private utilisateurRepository: Repository<Utilisateur>,
   ) {}
 
-  // pour admin
-  async findAllUser(): Promise<Utilisateur[]> {
-    const userFound = await this.utilisateurRepository.find();
-    if (!userFound) {
-      throw new NotFoundException(`Utilisateur non trouvée`);
-    }
-    return userFound;
+  //Construction et rappel de la table (utilisateur)
+
+  
+
+  // .get pour trouver l'ensemble des utilisateurs contenus ds la table utilisateur
+  async findAll(): Promise<Utilisateur[]> {
+    return await this.utilisateurRepository.find();
   }
 
   //.get pour trouver un utilisateur via son ID
@@ -35,4 +34,6 @@ export class UtilisateurService {
     }
     return utilisateurFound;
   }
+
+
 }

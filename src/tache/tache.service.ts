@@ -12,6 +12,7 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
+  
     @InjectRepository(Utilisateur)
     private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
@@ -36,15 +37,8 @@ export class TacheService {
     return await this.TacheRepository.save(newTache);
   }
 
-  // les tâches créées par un utilsateur
-  async findAllByUser(utilisateur: Utilisateur): Promise<Tache[]> {
-    const taskFound = await this.TacheRepository.findBy({
-      user_: utilisateur,
-    });
-    if (!taskFound) {
-      throw new NotFoundException(`Tâche non trouvée`);
-    }
-    return taskFound;
+  async findAll(): Promise<Tache[]> {
+    return await this.TacheRepository.find();
   }
 
   async findOne(
