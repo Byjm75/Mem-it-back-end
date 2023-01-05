@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-<<<<<<< HEAD
+// <<<<<<< HEAD
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
 import { Utilisateur } from './entities/utilisateur.entity';
@@ -31,7 +31,6 @@ export class UtilisateurService {
   async findAll(): Promise<Utilisateur[]> {
     return await this.utilisateurRepository.find();
   }
-  
 
   //.get pour trouver un utilisateur via son ID
   async findOne(idValue: string): Promise<Utilisateur> {
@@ -97,7 +96,7 @@ export class UtilisateurService {
   }
 
   //.delete pour supprimer un utilisateur via son id
-<<<<<<< HEAD
+  // <<<<<<< HEAD
   async remove(id: string): Promise<string> {
     const result = await this.utilisateurRepository.delete({ id });
     if (result.affected === 0) {

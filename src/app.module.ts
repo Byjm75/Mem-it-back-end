@@ -12,7 +12,7 @@ import { Categorie } from './categorie/entities/categorie.entity';
 import { Tache } from './tache/entities/tache.entity';
 import { Tag } from './tag/entities/tag.entity';
 import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
+// import { AuthService } from './auth/auth.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +33,7 @@ import { AuthService } from './auth/auth.service';
     TacheModule,
     TagModule,
     AuthModule,
-    AuthService,
+    // AuthService,
   ],
   controllers: [AppController],
   providers: [AppService],
