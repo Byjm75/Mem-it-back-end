@@ -12,6 +12,7 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
+import { GetUser } from './get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -31,8 +32,9 @@ export class AuthController {
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @GetUser()utilisateur: Utilisateur
   ): Promise<Utilisateur | string> {
-    return this.authService.update(id, updateUserDto);
+    return this.authService.update(id, updateUserDto, utilisateur);
   }
 
   @Delete(':id')

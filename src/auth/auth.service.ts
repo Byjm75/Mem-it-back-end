@@ -85,9 +85,10 @@ export class AuthService {
   async update(
     idValue: string,
     updateUserDto: UpdateUserDto,
+    utilisateur: Utilisateur
   ): Promise<Utilisateur | string> {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,
+      id: idValue,utilisateur
     });
     const { email, pseudo, password, picture } = updateUserDto;
     const pseudoExistAlready = await this.utilisateurRepository.findBy({
