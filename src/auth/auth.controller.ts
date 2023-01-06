@@ -12,7 +12,8 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
-import { GetUser } from './get-user.decorator';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -29,12 +30,12 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Patch('/update')
+  @Patch('/update/:id')
   update(
-    @Body() updateUtilisateurDto: UpdateUtilisateurDto,
-    @GetUser() utilisateur: Utilisateur,
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<Utilisateur | string> {
-    return this.utilisateurService.update(updateUtilisateurDto, utilisateur);
+    return this.authService.update(id, updateUserDto);
   }
 
   @Delete(':id')

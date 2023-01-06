@@ -34,6 +34,4 @@ export class UtilisateurService {
     }
     return utilisateurFound;
   }
-
-
 }

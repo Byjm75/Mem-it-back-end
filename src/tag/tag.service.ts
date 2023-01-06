@@ -18,60 +18,84 @@ export class TagService {
     utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     const { title } = createTagDto;
-    const existAlready = await this.TagRepository.findOneBy({ title });
+    const existAlready = await this.TagRepository.findBy({
+      title,
+      userId: utilisateur,
+    });
     console.log('Title Existtttttttttt', existAlready);
-    if (existAlready) {
-      return `Vous avez déja crée la tache avec le titre:${title}`;
+    if (existAlready.length > 0) {
+      return `Vous avez déja crée le tag avec le titre:${title} ${utilisateur}`;
     }
-    const newTag = this.TagRepository.create({
+    const newTag = await this.TagRepository.create({
       ...createTagDto,
       userId: utilisateur,
     });
     return await this.TagRepository.save(newTag);
   }
 
-  async findAll(): Promise<Tag[]> {
-    return await this.TagRepository.find();
-  }
-
-  async findOne(
-    title: string,
-    utilisateur: Utilisateur,
-  ): Promise<Tag | string> {
-    const tagFound = await this.TagRepository.findOneBy({
-      title,
+  async findAllByUser(utilisateur: Utilisateur): Promise<Tag[]> {
+    const tagFound = await this.TagRepository.findBy({
       userId: utilisateur,
     });
     if (!tagFound) {
-      throw new NotFoundException(`aucun tag trouvé avec le titre:${title}`);
+      throw new NotFoundException(`Tag non trouvé`);
+    }
+    return tagFound;
+  }
+
+  async findOne(
+    idValue: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
+    const tagFound = await this.TagRepository.findOneBy({
+      id: idValue,
+      userId: utilisateur,
+    });
+    if (!tagFound) {
+      throw new NotFoundException(`aucun tag trouvé avec le titre:${idValue}`);
     }
     return tagFound;
   }
 
   async update(
-    title: string,
+    idValue: string,
     updateTagDto: UpdateTagDto,
     utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     const upDateTag = await this.TagRepository.findOneBy({
-      title,
+      id: idValue,
       userId: utilisateur,
     });
-    upDateTag.title = updateTagDto.title;
-
-    return await this.TagRepository.save(upDateTag);
+    const { title } = updateTagDto;
+    const titleExist = await this.TagRepository.findBy({
+      title,
+    });
+    if (titleExist.length > 0) {
+      throw new Error(`La catégorie ${title}existe déjà`);
+    }
+    try {
+      if (updateTagDto.title) {
+        upDateTag.title = updateTagDto.title;
+      }
+      return await this.TagRepository.save(upDateTag);
+    } catch {
+      throw new Error('autre erreur categéorie');
+    }
   }
 
-  async remove(title: string, utilisateur: Utilisateur): Promise<Tag | string> {
+  async remove(
+    idValue: string,
+    utilisateur: Utilisateur,
+  ): Promise<Tag | string> {
     const result = await this.TagRepository.delete({
       userId: utilisateur,
-      title,
+      id: idValue,
     });
     {
       if (result.affected === 0) {
-        throw new NotFoundException(`aucun tag trouvé le titre:${title}`);
+        throw new NotFoundException(`aucun tag trouvé le titre:${idValue}`);
       }
-      return `le tag avec le tire:${title} a été supprimé`;
+      return `le tag avec le tire:${idValue} a été supprimé`;
     }
   }
 }
