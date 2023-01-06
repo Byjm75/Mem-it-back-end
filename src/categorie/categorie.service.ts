@@ -67,33 +67,37 @@ export class CategorieService {
     updateCategorieDto: UpdateCategorieDto,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    const upDateCategorie = await this.categorieRepository.findOneBy({
-      id: idValue,
-      user_: utilisateur,
-    });
-    console.log(upDateCategorie);
+    console.log(idValue);
+    console.log(utilisateur);
+    const query = this.categorieRepository.createQueryBuilder();
+    query.where({ id: idValue }).andWhere({ user_: utilisateur });
+    const upDateCategorie = await query.getOne();
+    console.log('update', upDateCategorie);
+
+    console.log('upDateCategorie---------', upDateCategorie);
     const { title, image, favoris } = updateCategorieDto;
     const titleExist = await this.categorieRepository.findBy({
       title,
     });
     console.log(titleExist);
-    if (titleExist.length > 0) {
-      throw new Error(`La catégorie ${title}existe déjà`);
+    // console.log('query------------', query);
+    // if (titleExist.length > 0) {
+    //   throw new Error(`La catégorie ${title}existe déjà`);
+    // }
+    // try {
+    if (upDateCategorie.title !== undefined) {
+      upDateCategorie.title = updateCategorieDto.title;
     }
-    try {
-      if (updateCategorieDto.title) {
-        upDateCategorie.title = updateCategorieDto.title;
-      }
-      if (updateCategorieDto.image) {
-        upDateCategorie.image = updateCategorieDto.image;
-      }
-      if (updateCategorieDto.favoris) {
-        upDateCategorie.favoris = updateCategorieDto.favoris;
-      }
-      return await this.categorieRepository.save(upDateCategorie);
-    } catch {
-      throw new Error('autre erreur categéorie');
+    if (updateCategorieDto.image) {
+      upDateCategorie.image = updateCategorieDto.image;
     }
+    if (updateCategorieDto.favoris) {
+      upDateCategorie.favoris = updateCategorieDto.favoris;
+    }
+    return await this.categorieRepository.save(upDateCategorie);
+    // } catch {
+    //   throw new Error('autre erreur categéorie');
+    // }
   }
 
   async remove(

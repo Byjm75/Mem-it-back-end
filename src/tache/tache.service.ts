@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
-import { UpdateTacheDto } from './dto/update-tache.dto';
 import * as bcrypt from 'bcrypt';
 import { Tache } from './entities/tache.entity';
+import { updateTacheDto } from './dto/update-tache.dto';
 
 @Injectable()
 export class TacheService {
@@ -19,12 +19,11 @@ export class TacheService {
     utilisateur: Utilisateur,
   ): Promise<Tache | string> {
     const { title } = createTacheDto;
-    const existAlready = await this.TacheRepository.findBy({
-      title,
-      user_: utilisateur,
-    });
-    console.log('Tache Existtttttttttt', existAlready);
-    if (existAlready.length > 0) {
+    const query = this.TacheRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+
+    if (existAlready !== null) {
       return `Vous avez déja crée la Tâche avec le titre:${title} ${utilisateur}`;
     }
     const newTache = await this.TacheRepository.create({
@@ -54,46 +53,52 @@ export class TacheService {
       user_: utilisateur,
     });
     if (!taskFound) {
-      throw new NotFoundException(`Tâche non trouvée avec le titre:${idValue}`);
+      throw new NotFoundException(`Tâche non trouvée avec l'id:${idValue}`);
     }
     return taskFound;
   }
 
   async update(
     idValue: string,
-    updateTacheDto: UpdateTacheDto,
+    updateTacheDto: updateTacheDto,
     utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    const upDateTache = await this.TacheRepository.findOneBy({
+    console.log(idValue);
+    console.log('Utilisateurrrrrrrrrrrrrr', utilisateur);
+    const { title } = updateTacheDto;
+    const query = this.TacheRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+    console.log('updateeeeeee', existAlready);
+
+    if (existAlready !== null) {
+      return `La tâche ${title} existe déjà avec l'utilisateur ${utilisateur}`;
+    }
+    const tacheToUpdate = await this.TacheRepository.findOneBy({
       id: idValue,
       user_: utilisateur,
     });
-    console.log(upDateTache);
-    const { body, date_event, image, title, url } = updateTacheDto;
-    const titleExist = await this.TacheRepository.findBy({
-      title,
-    });
-    console.log(titleExist);
-    if (titleExist.length > 0) {
-      throw new Error(`La tâche ${title} existe déjà`);
+    if (!tacheToUpdate) {
+      throw new NotFoundException(`Tâche non trouvée avec le titre:${idValue}`);
     }
+
     try {
-      if (updateTacheDto.body) {
-        upDateTache.body = updateTacheDto.body;
+      if (updateTacheDto.body !== null) {
+        tacheToUpdate.body = updateTacheDto.body;
       }
-      if (updateTacheDto.date_event) {
-        upDateTache.date_event = updateTacheDto.date_event;
+      if (updateTacheDto.date_event !== null) {
+        tacheToUpdate.date_event = updateTacheDto.date_event;
       }
-      if (updateTacheDto.image) {
-        upDateTache.image = updateTacheDto.image;
+      if (updateTacheDto.image !== null) {
+        tacheToUpdate.image = updateTacheDto.image;
       }
-      if (updateTacheDto.title) {
-        upDateTache.title = updateTacheDto.title;
+      if (updateTacheDto.title !== null) {
+        tacheToUpdate.title = updateTacheDto.title;
       }
-      if (updateTacheDto.url) {
-        upDateTache.url = updateTacheDto.url;
+      if (updateTacheDto.url !== null) {
+        tacheToUpdate.url = updateTacheDto.url;
       }
-      return await this.TacheRepository.save(upDateTache);
+      return await this.TacheRepository.save(tacheToUpdate);
     } catch {
       throw new Error('autre erreur tâche');
     }

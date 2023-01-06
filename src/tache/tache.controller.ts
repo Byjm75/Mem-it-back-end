@@ -10,11 +10,11 @@ import {
 } from '@nestjs/common';
 import { TacheService } from './tache.service';
 import { CreateTacheDto } from './dto/create-tache.dto';
-import { UpdateTacheDto } from './dto/update-tache.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Tache } from './entities/tache.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
+import { updateTacheDto } from './dto/update-tache.dto';
 
 @Controller('tache')
 @UseGuards(AuthGuard())
@@ -26,7 +26,6 @@ export class TacheController {
     @Body() createTacheDto: CreateTacheDto,
     @GetUser() utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    console.log(Utilisateur);
     return this.tacheService.create(createTacheDto, utilisateur);
   }
 
@@ -36,20 +35,21 @@ export class TacheController {
     return this.tacheService.findAllByUser(utilisateur);
   }
 
-  @Get(':title')
+  @Get(':id')
   findOne(
-    @Param('title') title: string,
+    @Param('id') id: string,
     @GetUser() utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    return this.tacheService.findOne(title, utilisateur);
+    return this.tacheService.findOne(id, utilisateur);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateTacheDto: UpdateTacheDto,
-    utilisateur: Utilisateur,
+    @Body() updateTacheDto: updateTacheDto,
+    @GetUser() utilisateur: Utilisateur,
   ): Promise<Tache | string> {
+    console.log(Utilisateur);
     return this.tacheService.update(id, updateTacheDto, utilisateur);
   }
 
