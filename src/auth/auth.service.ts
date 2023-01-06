@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  MethodNotAllowedException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -70,8 +71,8 @@ export class AuthService {
     console.log('je veux ton mdp', password);
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
-      const payload = { email };
-      console.log('je veux ton mail', email);
+      const payload = { utilisateur };
+      console.log('je veux ton profil', utilisateur);
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -85,10 +86,19 @@ export class AuthService {
   async update(
     idValue: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<Utilisateur | string> {
+    utilisateur: Utilisateur,
+  ): Promise<Utilisateur> {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
       id: idValue,
     });
+    console.log('id requête utilisateur', idValue);
+    console.log('id utilisateur', utilisateur.id);
+
+    if (upDateUtilisateur.id !== utilisateur.id) {
+      throw new MethodNotAllowedException(
+        "Vous n'êtes pas autorisé à modifier ces informations",
+      );
+    }
     const { email, pseudo, password, picture } = updateUserDto;
     const pseudoExistAlready = await this.utilisateurRepository.findBy({
       pseudo,
