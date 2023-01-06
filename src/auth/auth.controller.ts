@@ -8,7 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UpdateUtilisateurDto } from 'src/utilisateur/dto/update-utilisateur.dto';
-import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';

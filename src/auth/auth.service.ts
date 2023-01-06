@@ -81,23 +81,6 @@ export class AuthService {
     }
   }
 
-  //.patch pour modifier l'ensemble ou un élément de l'interface
-  async update(
-    updateUtilisateurDto: UpdateUtilisateurDto,
-    utilisateur: Utilisateur,
-  ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({});
-    const salt = await bcrypt.genSalt();
-    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
-    upDateUtilisateur.password = hashedPassword;
-    upDateUtilisateur.email = updateUtilisateurDto.email;
-    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
-    hashedPassword = updateUtilisateurDto.password;
-    upDateUtilisateur.picture = updateUtilisateurDto.picture;
-
-    return await this.utilisateurRepository.save(upDateUtilisateur);
-  }
-
   //Modification d'un utilisateur
   async update(
     idValue: string,
