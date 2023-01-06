@@ -50,34 +50,22 @@ export class CategorieService {
       ...createCategorieDto,
       user_: utilisateur,
     });
-    return await this.categorieRepository.save(newCategorie);
-  }
-  async findAllCategoriesByUser(
-    utilisateur: Utilisateur,
-  ): Promise<Categorie[]> {
-    const categorieFound = await this.categorieRepository.findBy({
-      user_: utilisateur,
-    });
-    if (!categorieFound) {
-      throw new NotFoundException(`Catérorie non trouvée`);
+    try {
+      if (createCategorieDto.image.length < 1) {
+        newCategorie.image =
+          'https://www.lacourdespetits.com/wp-content/uploads/2015/12/logo_lacourdespetits.jpg';
+      }
+      console.log(createCategorieDto.image);
+      if (createCategorieDto.image) {
+        newCategorie.image = createCategorieDto.image;
+      }
+      if (createCategorieDto.title) {
+        newCategorie.title = createCategorieDto.title;
+      }
+      return await this.categorieRepository.save(newCategorie);
+    } catch {
+      throw new Error('erreur test');
     }
-    return categorieFound;
-  }
-
-  async findOne(
-    idValue: string,
-    utilisateur: Utilisateur,
-  ): Promise<Categorie | string> {
-    const categorieFound = await this.categorieRepository.findOneBy({
-      id: idValue,
-      user_: utilisateur,
-    });
-    if (!categorieFound) {
-      throw new NotFoundException(
-        `Categorie non trouvé avec le titre:${idValue}`,
-      );
-    }
-    return categorieFound;
   }
 
   async update(
