@@ -67,15 +67,13 @@ export class AuthService {
       );
     }
   }
-  
+
   //.patch pour modifier l'ensemble ou un élément de l'interface
   async update(
-    idValue: string,
     updateUtilisateurDto: UpdateUtilisateurDto,
+    utilisateur: Utilisateur,
   ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,
-    });
+    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({});
     const salt = await bcrypt.genSalt();
     let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
     upDateUtilisateur.password = hashedPassword;
