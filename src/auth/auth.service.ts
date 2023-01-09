@@ -88,15 +88,38 @@ export class AuthService {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
       id: idValue,
     });
-    const salt = await bcrypt.genSalt();
-    let hashedPassword = await bcrypt.hash(upDateUtilisateur.password, salt);
-    upDateUtilisateur.password = hashedPassword;
-    upDateUtilisateur.email = updateUtilisateurDto.email;
-    upDateUtilisateur.pseudo = updateUtilisateurDto.pseudo;
-    hashedPassword = updateUtilisateurDto.password;
-    upDateUtilisateur.picture = updateUtilisateurDto.picture;
-
-    return await this.utilisateurRepository.save(upDateUtilisateur);
+    const { email, pseudo, password, picture } = updateUserDto;
+    const pseudoExistAlready = await this.utilisateurRepository.findBy({
+      pseudo,
+    });
+    const mailExistAlready = await this.utilisateurRepository.findBy({
+      email,
+    });
+    if (updateUserDto.pseudo&&pseudoExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
+    } else if (updateUserDto.email&&mailExistAlready.length > 0) {
+      throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
+    }
+    console.log(updateUserDto.pseudo);
+    try {
+      if (updateUserDto.email) {
+        upDateUtilisateur.email = updateUserDto.email;
+      }
+      if (updateUserDto.pseudo) {
+        upDateUtilisateur.pseudo = updateUserDto.pseudo;
+      }
+      if (updateUserDto.picture) {
+        upDateUtilisateur.picture = updateUserDto.picture;
+      }
+      if (updateUserDto.password) {
+        const salt = await bcrypt.genSalt();
+        let hashedPassword = await bcrypt.hash(password, salt);
+        upDateUtilisateur.password = hashedPassword;
+      }
+      return await this.utilisateurRepository.save(upDateUtilisateur);
+    } catch {
+      throw new Error('à definir');
+    }
   }
 
   async remove(id: string): Promise<Utilisateur | string> {
