@@ -8,7 +8,6 @@ export enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin',
 }
-
 @Entity()
 export class Utilisateur {
   //Je génére la clé primaire
@@ -40,6 +39,7 @@ export class Utilisateur {
     nullable: true,
   })
   picture?: string;
+
   @Column({
     type: 'enum',
     enum: RoleEnumType,

@@ -22,11 +22,8 @@ export class Tache {
   })
   title: string;
 
-  @Column({
-    nullable: true,
-    type: 'date',
-  })
-  date_creation: string;
+  @CreateDateColumn()
+  date_creation: Date;
 
   @Column({
     nullable: true,

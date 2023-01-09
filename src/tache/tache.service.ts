@@ -12,7 +12,6 @@ export class TacheService {
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
-  
     @InjectRepository(Utilisateur)
     private UtilisateurRepository: Repository<Utilisateur>,
   ) {}
