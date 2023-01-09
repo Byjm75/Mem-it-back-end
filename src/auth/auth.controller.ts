@@ -6,15 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
+import { GetUser } from './get-user.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
+  utilisateurService: any;
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
@@ -28,11 +32,14 @@ export class AuthController {
   }
 
   @Patch('/update/:id')
+  @UseGuards(AuthGuard())
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<Utilisateur | string> {
-    return this.authService.update(id, updateUserDto);
+    @GetUser() utilisateur: Utilisateur,
+  ): Promise<Utilisateur> {
+    console.log(utilisateur);
+    return this.authService.update(id, updateUserDto, utilisateur);
   }
 
   @Delete(':id')
