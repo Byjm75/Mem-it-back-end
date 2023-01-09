@@ -97,9 +97,9 @@ export class AuthService {
     const mailExistAlready = await this.utilisateurRepository.findBy({
       email,
     });
-    if (pseudoExistAlready.length > 0) {
+    if (updateUserDto.pseudo&&pseudoExistAlready.length > 0) {
       throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
-    } else if (mailExistAlready.length > 0) {
+    } else if (updateUserDto.email&&mailExistAlready.length > 0) {
       throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
     }
     console.log(updateUserDto.pseudo);

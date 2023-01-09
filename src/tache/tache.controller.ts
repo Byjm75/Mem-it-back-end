@@ -36,12 +36,12 @@ export class TacheController {
     return this.tacheService.findAllByUser(utilisateur);
   }
 
-  @Get(':title')
+  @Get(':id')
   findOne(
-    @Param('title') title: string,
+    @Param('id') id: string,
     @GetUser() utilisateur: Utilisateur,
   ): Promise<Tache | string> {
-    return this.tacheService.findOne(title, utilisateur);
+    return this.tacheService.findOne(id, utilisateur);
   }
 
   @Patch(':id')

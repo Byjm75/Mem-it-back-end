@@ -13,27 +13,91 @@ export class CategorieService {
     private categorieRepository: Repository<Categorie>,
   ) {}
 
-  async create(
-    createCategorieDto: CreateCategorieDto,
+  // async create(
+  //   createCategorieDto: CreateCategorieDto,
+  //   utilisateur: Utilisateur,
+  // ): Promise<Categorie | string> {
+  //   const { title } = createCategorieDto;
+  //   console.log('je veux tout', utilisateur.email);
+  //   const existAlready = await this.categorieRepository.findBy({
+  //     title,
+  //     user_: utilisateur,
+  //   });
+  //   console.log('catégorie doublon trouvée', existAlready);
+  //   if (existAlready.length > 0) {
+  //     return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
+  //   }
+  //   const newCategorie = await this.categorieRepository.create({
+  //     ...createCategorieDto,
+  //     user_: utilisateur,
+  //   });
+  //   return await this.categorieRepository.save(newCategorie);
+  // }
+  // les catégories créées par un utilsateur
+async create(
+  createCategorieDto : CreateCategorieDto,
+  utilisateur: Utilisateur,): Promise<Categorie|string>{
+    const {title, image, favoris}= createCategorieDto;
+    const existAlready = await this.categorieRepository.findBy({user_: utilisateur, title});
+    if (existAlready.length>0){
+      return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
+    }const newCategorie = await this.categorieRepository.create({
+      ...createCategorieDto,
+      user_:utilisateur,
+    });
+    try{
+    if(createCategorieDto.image.length<1){
+      newCategorie.image= 'https://www.lacourdespetits.com/wp-content/uploads/2015/12/logo_lacourdespetits.jpg'
+    }console.log(createCategorieDto.image)
+    if(createCategorieDto.image){
+      newCategorie.image= createCategorieDto.image
+    }
+    if(createCategorieDto.title){
+      newCategorie.title=createCategorieDto.title
+    }
+    return await this.categorieRepository.save(newCategorie);
+
+  }
+  catch{
+    throw new Error('erreur test')
+  }
+  }
+
+  async update(
+    idValue: string,
+    updateCategorieDto: UpdateCategorieDto,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    const { title } = createCategorieDto;
-    console.log('je veux tout', utilisateur.email);
-    const existAlready = await this.categorieRepository.findBy({
+    const upDateCategorie = await this.categorieRepository.findOneBy({
+      id: idValue,
+      user_: utilisateur,
+    });
+    console.log(upDateCategorie);
+    const { title, image, favoris } = updateCategorieDto;
+    const titleExist = await this.categorieRepository.findBy({
       title,
       user_: utilisateur,
-    });
-    console.log('catégorie doublon trouvée', existAlready);
-    if (existAlready.length > 0) {
-      return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
+      
+    });console.log(utilisateur)
+    console.log(titleExist);
+    if (titleExist.length > 0) {
+      throw new Error(`La catégorie ${title}existe déjà`);
     }
-    const newCategorie = await this.categorieRepository.create({
-      ...createCategorieDto,
-      user_: utilisateur,
-    });
-    return await this.categorieRepository.save(newCategorie);
+    try {
+      if (updateCategorieDto.title) {
+        upDateCategorie.title = updateCategorieDto.title;
+      }
+      if (updateCategorieDto.image) {
+        upDateCategorie.image = updateCategorieDto.image;
+      }
+      if (updateCategorieDto.favoris) {
+        upDateCategorie.favoris = updateCategorieDto.favoris;
+      }
+      return await this.categorieRepository.save(upDateCategorie);
+    } catch {
+      throw new Error('autre erreur categéorie');
+    }
   }
-  // les catégories créées par un utilsateur
   async findAllCategoriesByUser(
     utilisateur: Utilisateur,
   ): Promise<Categorie[]> {
@@ -62,39 +126,7 @@ export class CategorieService {
     return categorieFound;
   }
 
-  async update(
-    idValue: string,
-    updateCategorieDto: UpdateCategorieDto,
-    utilisateur: Utilisateur,
-  ): Promise<Categorie | string> {
-    const upDateCategorie = await this.categorieRepository.findOneBy({
-      id: idValue,
-      user_: utilisateur,
-    });
-    console.log(upDateCategorie);
-    const { title, image, favoris } = updateCategorieDto;
-    const titleExist = await this.categorieRepository.findBy({
-      title,
-    });
-    console.log(titleExist);
-    if (titleExist.length > 0) {
-      throw new Error(`La catégorie ${title}existe déjà`);
-    }
-    try {
-      if (updateCategorieDto.title) {
-        upDateCategorie.title = updateCategorieDto.title;
-      }
-      if (updateCategorieDto.image) {
-        upDateCategorie.image = updateCategorieDto.image;
-      }
-      if (updateCategorieDto.favoris) {
-        upDateCategorie.favoris = updateCategorieDto.favoris;
-      }
-      return await this.categorieRepository.save(upDateCategorie);
-    } catch {
-      throw new Error('autre erreur categéorie');
-    }
-  }
+  
 
   async remove(
     idValue: string,
