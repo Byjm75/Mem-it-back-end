@@ -4,6 +4,10 @@ import { Tache } from 'src/tache/entities/tache.entity';
 import { Tag } from 'src/tag/entities/tag.entity';
 
 //Ici je crée l'interface de la table utilisateur
+export enum RoleEnumType {
+  USER = 'user',
+  ADMIN = 'admin',
+}
 @Entity()
 export class Utilisateur {
   //Je génére la clé primaire
@@ -35,6 +39,13 @@ export class Utilisateur {
     nullable: true,
   })
   picture?: string;
+
+  @Column({
+    type: 'enum',
+    enum: RoleEnumType,
+    default: RoleEnumType.USER,
+  })
+  role: RoleEnumType;
 
   //Je relis les tables suivant leurs cardinalités et par les clés étrangéres.
   @OneToMany(() => Categorie, (categories) => categories.user_, {

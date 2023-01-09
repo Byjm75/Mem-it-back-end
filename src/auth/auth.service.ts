@@ -25,7 +25,7 @@ export class AuthService {
 
   //Création d'un compte utilisateur
   async register(createAuthDto: CreateAuthDto) {
-    const { email, pseudo, password, picture } = createAuthDto;
+    const { email, pseudo, password, picture, role } = createAuthDto;
     // hashage du mot de passe
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -35,6 +35,7 @@ export class AuthService {
       email,
       password: hashedPassword,
       picture,
+      role,
     });
     const pseudoExistAlready = await this.utilisateurRepository.findBy({
       pseudo,
@@ -62,13 +63,14 @@ export class AuthService {
 
   //Connexion d'un utilisateur
   async login(loginDto: LoginDto) {
-    const { pseudo, email, password } = loginDto;
+    const { pseudo, email, password, role } = loginDto;
     const utilisateur = await this.utilisateurRepository.findOneBy({
       email,
     });
     console.log('je veux ton nom', pseudo);
     console.log('je veux ton mail', email);
     console.log('je veux ton mdp', password);
+    console.log('je veux ton role', role);
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
       const payload = { utilisateur };
