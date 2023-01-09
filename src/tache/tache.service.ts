@@ -35,8 +35,15 @@ export class TacheService {
     return await this.TacheRepository.save(newTache);
   }
 
-  async findAll(): Promise<Tache[]> {
-    return await this.TacheRepository.find();
+  async findAllTaskByUser(utilisateur: Utilisateur): Promise<Tache[]> {
+    const taskFound = await this.TacheRepository.findBy({
+      user_: utilisateur,
+    });
+    if (!taskFound) {
+      throw new NotFoundException(`Tâche non trouvée`);
+    }
+    console.log(taskFound);
+    return taskFound;
   }
 
   async findOne(
@@ -61,6 +68,7 @@ export class TacheService {
     console.log(idValue);
     console.log('Utilisateurrrrrrrrrrrrrr', utilisateur);
     const { title } = updateTacheDto;
+    console.log('TITLE', title);
     const query = this.TacheRepository.createQueryBuilder();
     query.where({ title }).andWhere({ user_: utilisateur });
     const existAlready = await query.getOne();
@@ -69,12 +77,13 @@ export class TacheService {
     if (existAlready !== null) {
       return `La tâche ${title} existe déjà avec l'utilisateur ${utilisateur}`;
     }
-    const tacheToUpdate = await this.TacheRepository.findOneBy({
-      id: idValue,
-      user_: utilisateur,
-    });
+    const query2 = this.TacheRepository.createQueryBuilder();
+    query2.where({ id: idValue }).andWhere({ user_: utilisateur });
+    const tacheToUpdate = await query2.getOne();
+    console.log('TO UPDATE ', tacheToUpdate);
+
     if (!tacheToUpdate) {
-      throw new NotFoundException(`Tâche non trouvée avec le titre:${idValue}`);
+      throw new NotFoundException(`Tâche non trouvée avec l'id:${idValue}`);
     }
 
     try {

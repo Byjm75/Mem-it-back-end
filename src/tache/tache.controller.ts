@@ -30,9 +30,9 @@ export class TacheController {
   }
 
   @Get()
-  findAll(@GetUser() utilisateur: Utilisateur): Promise<Tache[]> {
+  findAllTaskByUser(@GetUser() utilisateur: Utilisateur): Promise<Tache[]> {
     console.log(Tache);
-    return this.tacheService.findAll();
+    return this.tacheService.findAllTaskByUser(utilisateur);
   }
 
   @Get(':id')

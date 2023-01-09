@@ -13,26 +13,6 @@ export class CategorieService {
     private categorieRepository: Repository<Categorie>,
   ) {}
 
-  // async create(
-  //   createCategorieDto: CreateCategorieDto,
-  //   utilisateur: Utilisateur,
-  // ): Promise<Categorie | string> {
-  //   const { title } = createCategorieDto;
-  //   console.log('je veux tout', utilisateur.email);
-  //   const existAlready = await this.categorieRepository.findBy({
-  //     title,
-  //     user_: utilisateur,
-  //   });
-  //   console.log('catégorie doublon trouvée', existAlready);
-  //   if (existAlready.length > 0) {
-  //     return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
-  //   }
-  //   const newCategorie = await this.categorieRepository.create({
-  //     ...createCategorieDto,
-  //     user_: utilisateur,
-  //   });
-  //   return await this.categorieRepository.save(newCategorie);
-  // }
   // les catégories créées par un utilsateur
   async create(
     createCategorieDto: CreateCategorieDto,
@@ -109,6 +89,7 @@ export class CategorieService {
     const categorieFound = await this.categorieRepository.findBy({
       user_: utilisateur,
     });
+    console.log('categorieFound', categorieFound);
     if (!categorieFound) {
       throw new NotFoundException(`Catérorie non trouvée`);
     }
