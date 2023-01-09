@@ -91,7 +91,7 @@ export class AuthService {
     utilisateur: Utilisateur,
   ): Promise<Utilisateur> {
     const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,utilisateur
+      id: idValue
     });
     console.log('id requête utilisateur', idValue);
     console.log('id utilisateur', utilisateur.id);
