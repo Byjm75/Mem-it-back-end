@@ -1,6 +1,14 @@
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Tache {
@@ -8,17 +16,14 @@ export class Tache {
   id?: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
     type: 'varchar',
     length: 50,
   })
   title: string;
 
-  @Column({
-    nullable: false,
-    type: 'date',
-  })
-  date_creation: string;
+  @CreateDateColumn()
+  date_creation: Date;
 
   @Column({
     nullable: true,
@@ -42,9 +47,14 @@ export class Tache {
   })
   url: string;
 
-  @ManyToOne(() => Categorie, (categories) => categories.taches)
+  @ManyToOne(() => Categorie, (categories) => categories.taches, {
+    onDelete: 'CASCADE',
+  })
   categorie_: Categorie;
 
-  @ManyToOne(() => Utilisateur, (user_) => user_.id, { nullable: false })
+  @ManyToOne(() => Utilisateur, (user_) => user_.id, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   user_: Utilisateur;
 }

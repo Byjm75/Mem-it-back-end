@@ -3,6 +3,8 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,6 +14,8 @@ import {
 export class Categorie {
   @PrimaryGeneratedColumn('uuid') // La fonction uuid est une dependencie et transforme l'Id de type number en type string.
   id?: string;
+
+  
 
   @Column({
     nullable: false, // Ici le typage "nullable"= false indique que l'utilisateur doit obligatoirement remplire le title.
@@ -25,9 +29,17 @@ export class Categorie {
   })
   image: string;
 
-  @ManyToOne(() => Utilisateur, (user) => user.categories, { nullable: false }) //Cela permet de rendre nullable la clé primaire, ici user_id
+  @Column({ default: false, nullable: false })
+  favoris: boolean;
+
+  @ManyToOne(() => Utilisateur, (user) => user.categories, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  }) //Cela permet de rendre nullable la clé primaire, ici user_id
   user_: Utilisateur;
 
-  @OneToMany(() => Tache, (taches) => taches.categorie_)
+  @OneToMany(() => Tache, (taches) => taches.categorie_, {
+    onDelete: 'CASCADE',
+  })
   taches: Tache[];
 }

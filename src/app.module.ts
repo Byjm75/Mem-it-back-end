@@ -11,11 +11,12 @@ import { ConfigModule } from '@nestjs/config';
 import { Categorie } from './categorie/entities/categorie.entity';
 import { Tache } from './tache/entities/tache.entity';
 import { Tag } from './tag/entities/tag.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: '.env.local',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -25,12 +26,13 @@ import { Tag } from './tag/entities/tag.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [Utilisateur, Categorie, Tache, Tag],
-      synchronize: true,
+      synchronize: process.env.MODE === 'DEV' ? true : false,
     }),
-    // UtilisateurModule,
-    // CategorieModule,
-    // TacheModule,
-    // TagModule,
+    UtilisateurModule,
+    CategorieModule,
+    TacheModule,
+    TagModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,11 +4,15 @@ import { Tache } from 'src/tache/entities/tache.entity';
 import { Tag } from 'src/tag/entities/tag.entity';
 
 //Ici je crée l'interface de la table utilisateur
+export enum RoleEnumType {
+  USER = 'user',
+  ADMIN = 'admin',
+}
 @Entity()
 export class Utilisateur {
   //Je génére la clé primaire
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   //Je crée les colonnes
   @Column({
@@ -25,23 +29,36 @@ export class Utilisateur {
   }) //je précise le varchar car pas en 255.
   pseudo: string;
   //TypeOrm est typé par default en varchar 255 si autre le préciser
-  @Column({
-    nullable: true,
-  })
-  picture: string;
 
   @Column({
     nullable: false,
   })
   password: string;
 
+  @Column({
+    nullable: true,
+  })
+  picture?: string;
+
+  @Column({
+    type: 'enum',
+    enum: RoleEnumType,
+    default: RoleEnumType.USER,
+  })
+  role: RoleEnumType;
+
   //Je relis les tables suivant leurs cardinalités et par les clés étrangéres.
-  @OneToMany(() => Categorie, (categories) => categories.user_)
+  @OneToMany(() => Categorie, (categories) => categories.user_, {
+    onDelete: 'CASCADE',
+  })
   categories: Categorie[];
 
-  @OneToMany(() => Tache, (taches) => taches.user_)
-  user_: Tache;
+  @OneToMany(() => Tache, (task) => task.user_, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  taches: Tache[];
 
-  @OneToMany(() => Tag, (userTag) => userTag.user)
-  tags: Tag;
+  @OneToMany(() => Tag, (userTag) => userTag.userId, { onDelete: 'CASCADE' })
+  tags: Tag[];
 }
