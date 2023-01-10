@@ -57,8 +57,4 @@ export class Tache {
     nullable: false,
   })
   user_: Utilisateur;
-
-  @ManyToMany(() => Utilisateur, { eager: true })
-  @JoinTable()
-  utilisateur: Utilisateur[];
 }

@@ -48,7 +48,7 @@ export class CategorieController {
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
-    utilisateur: Utilisateur,
+    @GetUser() utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     return this.categorieService.update(id, updateCategorieDto, utilisateur);
   }

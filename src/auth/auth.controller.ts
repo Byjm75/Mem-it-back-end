@@ -30,20 +30,4 @@ export class AuthController {
   login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     return this.authService.login(loginDto);
   }
-
-  @Patch('/update/:id')
-  @UseGuards(AuthGuard())
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @GetUser() utilisateur: Utilisateur,
-  ): Promise<Utilisateur> {
-    console.log(utilisateur);
-    return this.authService.update(id, updateUserDto, utilisateur);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(id);
-  }
 }

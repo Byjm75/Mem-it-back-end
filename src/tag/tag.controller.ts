@@ -48,7 +48,7 @@ export class TagController {
   update(
     @Param('id') id: string,
     @Body() updateTagDto: UpdateTagDto,
-    utilisateur: Utilisateur,
+    @GetUser() utilisateur: Utilisateur,
   ): Promise<Tag | string> {
     return this.tagService.update(id, updateTagDto, utilisateur);
   }
