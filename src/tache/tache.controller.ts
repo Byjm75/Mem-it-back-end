@@ -54,11 +54,7 @@ export class TacheController {
   }
 
   @Delete(':id')
-  remove(
-    @Param('id') id: string,
-    @Body()
-    utilisateur: Utilisateur,
-  ) {
+  remove(@Param('id') id: string, @GetUser() utilisateur: Utilisateur) {
     return this.tacheService.remove(id, utilisateur);
   }
 }

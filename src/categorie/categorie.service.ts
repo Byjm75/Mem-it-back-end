@@ -19,11 +19,11 @@ export class CategorieService {
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     const { title, image, favoris } = createCategorieDto;
-    const existAlready = await this.categorieRepository.findBy({
-      user_: utilisateur,
-      title,
-    });
-    if (existAlready.length > 0) {
+    const query = this.categorieRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+
+    if (existAlready !== null) {
       return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
     }
     const newCategorie = await this.categorieRepository.create({
@@ -48,41 +48,6 @@ export class CategorieService {
     }
   }
 
-  async update(
-    idValue: string,
-    updateCategorieDto: UpdateCategorieDto,
-    utilisateur: Utilisateur,
-  ): Promise<Categorie | string> {
-    const upDateCategorie = await this.categorieRepository.findOneBy({
-      id: idValue,
-      user_: utilisateur,
-    });
-    console.log(upDateCategorie);
-    const { title, image, favoris } = updateCategorieDto;
-    const titleExist = await this.categorieRepository.findBy({
-      title,
-      user_: utilisateur,
-    });
-    console.log(utilisateur);
-    console.log(titleExist);
-    if (titleExist.length > 0) {
-      throw new Error(`La catégorie ${title}existe déjà`);
-    }
-    try {
-      if (updateCategorieDto.title) {
-        upDateCategorie.title = updateCategorieDto.title;
-      }
-      if (updateCategorieDto.image) {
-        upDateCategorie.image = updateCategorieDto.image;
-      }
-      if (updateCategorieDto.favoris) {
-        upDateCategorie.favoris = updateCategorieDto.favoris;
-      }
-      return await this.categorieRepository.save(upDateCategorie);
-    } catch {
-      throw new Error('autre erreur categéorie');
-    }
-  }
   async findAllCategoriesByUser(
     utilisateur: Utilisateur,
   ): Promise<Categorie[]> {
@@ -110,6 +75,47 @@ export class CategorieService {
       );
     }
     return categorieFound;
+  }
+  async update(
+    idValue: string,
+    updateCategorieDto: UpdateCategorieDto,
+    utilisateur: Utilisateur,
+  ): Promise<Categorie | string> {
+    console.log(idValue);
+    console.log('Utilisateurrrrrrrrrrrrrr', utilisateur);
+    const { title } = updateCategorieDto;
+    console.log('TITLE', title);
+    const query = this.categorieRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+    console.log('updateeeeeee', existAlready);
+
+    if (existAlready !== null) {
+      return `La tâche ${title} existe déjà avec l'utilisateur ${utilisateur}`;
+    }
+    const query2 = this.categorieRepository.createQueryBuilder();
+    query2.where({ id: idValue }).andWhere({ user_: utilisateur });
+    const cateToUpdate = await query2.getOne();
+    console.log('TO UPDATE ', cateToUpdate);
+
+    if (!cateToUpdate) {
+      throw new NotFoundException(`Catégorie non trouvée avec l'id:${idValue}`);
+    }
+
+    try {
+      if (updateCategorieDto.image !== null) {
+        cateToUpdate.image = updateCategorieDto.image;
+      }
+      if (updateCategorieDto.title !== null) {
+        cateToUpdate.title = updateCategorieDto.title;
+      }
+      if (updateCategorieDto.favoris !== null) {
+        cateToUpdate.favoris = updateCategorieDto.favoris;
+      }
+      return await this.categorieRepository.save(cateToUpdate);
+    } catch {
+      throw new Error('autre erreur tâche');
+    }
   }
 
   async remove(
