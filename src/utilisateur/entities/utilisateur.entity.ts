@@ -53,7 +53,10 @@ export class Utilisateur {
   })
   categories: Categorie[];
 
-  @OneToMany(() => Tache, (task) => task.user_, { onDelete: 'CASCADE' })
+  @OneToMany(() => Tache, (task) => task.user_, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   taches: Tache[];
 
   @OneToMany(() => Tag, (userTag) => userTag.userId, { onDelete: 'CASCADE' })

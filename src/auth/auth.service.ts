@@ -73,6 +73,8 @@ export class AuthService {
     console.log('je veux ton role', role);
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
+      //Supprimer la propriété de taches de l'objet l'utilisateur
+      delete utilisateur.taches;
       const payload = { utilisateur };
       console.log('je veux ton profil', utilisateur);
       const accessToken = await this.jwtService.sign(payload);
@@ -82,67 +84,5 @@ export class AuthService {
         'Ces identifiants ne sont pas bons, déso...',
       );
     }
-  }
-
-  //Modification d'un utilisateur
-  async update(
-    idValue: string,
-    updateUserDto: UpdateUserDto,
-    utilisateur: Utilisateur,
-  ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue
-    });
-    console.log('id requête utilisateur', idValue);
-    console.log('id utilisateur', utilisateur.id);
-
-    if (upDateUtilisateur.id !== utilisateur.id) {
-      throw new MethodNotAllowedException(
-        "Vous n'êtes pas autorisé à modifier ces informations",
-      );
-    }
-    const { email, pseudo, password, picture } = updateUserDto;
-    const pseudoExistAlready = await this.utilisateurRepository.findBy({
-      pseudo,
-    });
-    const mailExistAlready = await this.utilisateurRepository.findBy({
-      email,
-    });
-    if (updateUserDto.pseudo&&pseudoExistAlready.length > 0) {
-      throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
-    } else if (updateUserDto.email&&mailExistAlready.length > 0) {
-      throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
-    }
-    console.log(updateUserDto.pseudo);
-    try {
-      if (updateUserDto.email) {
-        upDateUtilisateur.email = updateUserDto.email;
-      }
-      if (updateUserDto.pseudo) {
-        upDateUtilisateur.pseudo = updateUserDto.pseudo;
-      }
-      if (updateUserDto.picture) {
-        upDateUtilisateur.picture = updateUserDto.picture;
-      }
-      if (updateUserDto.password) {
-        const salt = await bcrypt.genSalt();
-        let hashedPassword = await bcrypt.hash(password, salt);
-        upDateUtilisateur.password = hashedPassword;
-      }
-      return await this.utilisateurRepository.save(upDateUtilisateur);
-    } catch {
-      throw new Error('à definir');
-    }
-  }
-
-  //Suppression d'un compte utilisateur
-  async remove(id: string): Promise<Utilisateur | string> {
-    const result = await this.utilisateurRepository.delete({
-      id,
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-    }
-    return `Cette action a supprmé l'utilisateur #${id}`;
   }
 }

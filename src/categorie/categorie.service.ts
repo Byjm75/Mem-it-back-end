@@ -13,97 +13,48 @@ export class CategorieService {
     private categorieRepository: Repository<Categorie>,
   ) {}
 
-  // async create(
-  //   createCategorieDto: CreateCategorieDto,
-  //   utilisateur: Utilisateur,
-  // ): Promise<Categorie | string> {
-  //   const { title } = createCategorieDto;
-  //   console.log('je veux tout', utilisateur.email);
-  //   const existAlready = await this.categorieRepository.findBy({
-  //     title,
-  //     user_: utilisateur,
-  //   });
-  //   console.log('catégorie doublon trouvée', existAlready);
-  //   if (existAlready.length > 0) {
-  //     return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
-  //   }
-  //   const newCategorie = await this.categorieRepository.create({
-  //     ...createCategorieDto,
-  //     user_: utilisateur,
-  //   });
-  //   return await this.categorieRepository.save(newCategorie);
-  // }
   // les catégories créées par un utilsateur
-async create(
-  createCategorieDto : CreateCategorieDto,
-  utilisateur: Utilisateur,): Promise<Categorie|string>{
-    const {title, image, favoris}= createCategorieDto;
-    const existAlready = await this.categorieRepository.findBy({user_: utilisateur, title});
-    if (existAlready.length>0){
-      return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
-    }const newCategorie = await this.categorieRepository.create({
-      ...createCategorieDto,
-      user_:utilisateur,
-    });
-    try{
-    if(createCategorieDto.image.length<1){
-      newCategorie.image= 'https://www.lacourdespetits.com/wp-content/uploads/2015/12/logo_lacourdespetits.jpg'
-    }console.log(createCategorieDto.image)
-    if(createCategorieDto.image){
-      newCategorie.image= createCategorieDto.image
-    }
-    if(createCategorieDto.title){
-      newCategorie.title=createCategorieDto.title
-    }
-    return await this.categorieRepository.save(newCategorie);
-
-  }
-  catch{
-    throw new Error('erreur test')
-  }
-  }
-
-  async update(
-    idValue: string,
-    updateCategorieDto: UpdateCategorieDto,
+  async create(
+    createCategorieDto: CreateCategorieDto,
     utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
-    const upDateCategorie = await this.categorieRepository.findOneBy({
-      id: idValue,
+    const { title, image, favoris } = createCategorieDto;
+    const query = this.categorieRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+
+    if (existAlready !== null) {
+      return `Vous avez déja crée la Catégorie avec le titre:${title} ${utilisateur}`;
+    }
+    const newCategorie = await this.categorieRepository.create({
+      ...createCategorieDto,
       user_: utilisateur,
     });
-    console.log(upDateCategorie);
-    const { title, image, favoris } = updateCategorieDto;
-    const titleExist = await this.categorieRepository.findBy({
-      title,
-      user_: utilisateur,
-      
-    });console.log(utilisateur)
-    console.log(titleExist);
-    if (titleExist.length > 0) {
-      throw new Error(`La catégorie ${title}existe déjà`);
-    }
     try {
-      if (updateCategorieDto.title) {
-        upDateCategorie.title = updateCategorieDto.title;
+      if (createCategorieDto.image.length < 1) {
+        newCategorie.image =
+          'https://www.lacourdespetits.com/wp-content/uploads/2015/12/logo_lacourdespetits.jpg';
       }
-      if (updateCategorieDto.image) {
-        upDateCategorie.image = updateCategorieDto.image;
+      console.log(createCategorieDto.image);
+      if (createCategorieDto.image) {
+        newCategorie.image = createCategorieDto.image;
       }
-      if (updateCategorieDto.favoris) {
-        upDateCategorie.favoris = updateCategorieDto.favoris;
+      if (createCategorieDto.title) {
+        newCategorie.title = createCategorieDto.title;
       }
-      return await this.categorieRepository.save(upDateCategorie);
+      return await this.categorieRepository.save(newCategorie);
     } catch {
-      throw new Error('autre erreur categéorie');
+      throw new Error('erreur test');
     }
   }
+
   async findAllCategoriesByUser(
     utilisateur: Utilisateur,
   ): Promise<Categorie[]> {
     const categorieFound = await this.categorieRepository.findBy({
       user_: utilisateur,
     });
+    console.log('categorieFound', categorieFound);
     if (!categorieFound) {
       throw new NotFoundException(`Catérorie non trouvée`);
     }
@@ -125,8 +76,47 @@ async create(
     }
     return categorieFound;
   }
+  async update(
+    idValue: string,
+    updateCategorieDto: UpdateCategorieDto,
+    utilisateur: Utilisateur,
+  ): Promise<Categorie | string> {
+    console.log(idValue);
+    console.log('Utilisateurrrrrrrrrrrrrr', utilisateur);
+    const { title } = updateCategorieDto;
+    console.log('TITLE', title);
+    const query = this.categorieRepository.createQueryBuilder();
+    query.where({ title }).andWhere({ user_: utilisateur });
+    const existAlready = await query.getOne();
+    console.log('updateeeeeee', existAlready);
 
-  
+    if (existAlready !== null) {
+      return `La tâche ${title} existe déjà avec l'utilisateur ${utilisateur}`;
+    }
+    const query2 = this.categorieRepository.createQueryBuilder();
+    query2.where({ id: idValue }).andWhere({ user_: utilisateur });
+    const cateToUpdate = await query2.getOne();
+    console.log('TO UPDATE ', cateToUpdate);
+
+    if (!cateToUpdate) {
+      throw new NotFoundException(`Catégorie non trouvée avec l'id:${idValue}`);
+    }
+
+    try {
+      if (updateCategorieDto.image !== null) {
+        cateToUpdate.image = updateCategorieDto.image;
+      }
+      if (updateCategorieDto.title !== null) {
+        cateToUpdate.title = updateCategorieDto.title;
+      }
+      if (updateCategorieDto.favoris !== null) {
+        cateToUpdate.favoris = updateCategorieDto.favoris;
+      }
+      return await this.categorieRepository.save(cateToUpdate);
+    } catch {
+      throw new Error('autre erreur tâche');
+    }
+  }
 
   async remove(
     idValue: string,
