@@ -2,8 +2,6 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  MethodNotAllowedException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -13,7 +11,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
-import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +34,8 @@ export class AuthService {
       picture,
       role,
     });
+    //Ici on crée la gestion d'erreur (ne pouvant pas créer 2 fois le même compte).
+    // On compare email et mot de passe pour savoir si le compte user existe déja.
     const pseudoExistAlready = await this.utilisateurRepository.findBy({
       pseudo,
     });
@@ -67,21 +66,21 @@ export class AuthService {
     const utilisateur = await this.utilisateurRepository.findOneBy({
       email,
     });
-    console.log('je veux ton nom', pseudo);
-    console.log('je veux ton mail', email);
-    console.log('je veux ton mdp', password);
-    console.log('je veux ton role', role);
+    console.log('je veux ton nom------------', pseudo);
+    console.log('je veux ton mail-----------', email);
+    console.log('je veux ton mdp------------', password);
+    console.log('je veux ton role-----------', role);
 
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
-      //Supprimer la propriété de taches de l'objet l'utilisateur
+      //Supprime la propriété de taches de l'objet l'utilisateur
       delete utilisateur.taches;
       const payload = { utilisateur };
-      console.log('je veux ton profil', utilisateur);
+      console.log('je veux ton profil--------', utilisateur);
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException(
-        'Ces identifiants ne sont pas bons, déso...',
+        'Ces identifiants ne sont pas bons, désolé...',
       );
     }
   }
