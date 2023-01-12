@@ -3,7 +3,8 @@ import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Tache } from 'src/tache/entities/tache.entity';
 import { Tag } from 'src/tag/entities/tag.entity';
 
-//Ici je crée l'interface de la table utilisateur
+//Ici je crée l'interface de la table utilisateur avec mise en place du role = Admin ou Utilisateur
+//User sera défini par défault
 export enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin',
@@ -48,6 +49,7 @@ export class Utilisateur {
   role: RoleEnumType;
 
   //Je relis les tables suivant leurs cardinalités et par les clés étrangéres.
+  //Méthode du "ondelete en Cascade permet de supprimer les tables associées"
   @OneToMany(() => Categorie, (categories) => categories.user_, {
     onDelete: 'CASCADE',
   })

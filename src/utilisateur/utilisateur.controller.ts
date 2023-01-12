@@ -14,7 +14,7 @@ import { Roles } from 'src/auth/roles.decorator';
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService) {}
 
-  //--------------------------------------------REQUETE UTILISATEURS--------------------------------------------------------------------------------
+  //--------------------------------------------REQUETE UTILISATEURS------------------------------//
 
   @Get(':id')
   findOne(
@@ -23,8 +23,6 @@ export class UtilisateurController {
   ): Promise<Utilisateur> {
     return this.utilisateurService.findOne(id, utilisateur);
   }
-
-  // Update d'un utilisateur , interrogation sur mise en place d'un update admin pour user en admin = création d'une route supplémentaire?pertinence?
 
   @Patch(':id')
   update(
@@ -46,7 +44,7 @@ export class UtilisateurController {
   }
 
   //-------------------------------REQUETES ADMIN---------------------------//
-
+  //requetes avec route sécurisé pour l'Admin
   @Get('/admin')
   findAllUser(): Promise<Utilisateur[]> {
     return this.utilisateurService.findAllUser();

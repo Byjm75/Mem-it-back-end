@@ -13,7 +13,7 @@ export class UtilisateurService {
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
   ) {}
-  //-------------------------------REQUETES UTILISATEUR------------------------
+  //-------------------------------REQUETES UTILISATEUR------------------------//
 
   async findOne(
     idValue: string,
@@ -93,6 +93,7 @@ export class UtilisateurService {
   }
 
   //----------------------------------REQUETES ADMIN-------------------------//
+
   async findAllUser(): Promise<Utilisateur[]> {
     return await this.utilisateurRepository.find();
   }

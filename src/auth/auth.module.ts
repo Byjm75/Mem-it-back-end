@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 
+//Configuration du JWT
 @Module({
   imports: [
     TypeOrmModule.forFeature([Utilisateur]),
