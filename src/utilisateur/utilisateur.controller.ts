@@ -14,6 +14,8 @@ import { Roles } from 'src/auth/roles.decorator';
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService) {}
 
+  //--------------------------------------------REQUETE UTILISATEURS--------------------------------------------------------------------------------
+
   @Get(':id')
   findOne(
     @Param('id') id: string,
