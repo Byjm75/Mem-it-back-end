@@ -15,6 +15,7 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
+
 @Controller('categorie')
 @UseGuards(AuthGuard())
 export class CategorieController {
@@ -48,7 +49,7 @@ export class CategorieController {
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
-    utilisateur: Utilisateur,
+    @GetUser() utilisateur: Utilisateur,
   ): Promise<Categorie | string> {
     return this.categorieService.update(id, updateCategorieDto, utilisateur);
   }

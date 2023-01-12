@@ -2,8 +2,6 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  MethodNotAllowedException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -13,7 +11,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt/dist';
-import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +34,8 @@ export class AuthService {
       picture,
       role,
     });
+    //Ici on crée la gestion d'erreur (ne pouvant pas créer 2 fois le même compte).
+    // On compare email et mot de passe pour savoir si le compte user existe déja.
     const pseudoExistAlready = await this.utilisateurRepository.findBy({
       pseudo,
     });
@@ -67,82 +66,23 @@ export class AuthService {
     const utilisateur = await this.utilisateurRepository.findOneBy({
       email,
     });
-    console.log('je veux ton nom', pseudo);
-    console.log('je veux ton mail', email);
-    console.log('je veux ton mdp', password);
-    console.log('je veux ton role', role);
-
+    console.log('je veux ton nom------------', pseudo);
+    console.log('je veux ton mail-----------', email);
+    console.log('je veux ton mdp------------', password);
+    console.log('je veux ton role-----------', role);
+    //Ici comparasaison du MP Hashé
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
+      //Supprime la propriété de taches de l'objet l'utilisateur
+      delete utilisateur.taches;
       const payload = { utilisateur };
-      console.log('je veux ton profil', utilisateur);
+      console.log('je veux ton profil--------', utilisateur);
+      //Ici envoie du Token d'accés
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException(
-        'Ces identifiants ne sont pas bons, déso...',
+        'Ces identifiants ne sont pas bons, désolé...',
       );
     }
-  }
-
-  //Modification d'un utilisateur
-  async update(
-    idValue: string,
-    updateUserDto: UpdateUserDto,
-    utilisateur: Utilisateur,
-  ): Promise<Utilisateur> {
-    const upDateUtilisateur = await this.utilisateurRepository.findOneBy({
-      id: idValue,
-    });
-    console.log('id requête utilisateur', idValue);
-    console.log('id utilisateur', utilisateur.id);
-
-    if (upDateUtilisateur.id !== utilisateur.id) {
-      throw new MethodNotAllowedException(
-        "Vous n'êtes pas autorisé à modifier ces informations",
-      );
-    }
-    const { email, pseudo, password, picture } = updateUserDto;
-    const pseudoExistAlready = await this.utilisateurRepository.findBy({
-      pseudo,
-    });
-    const mailExistAlready = await this.utilisateurRepository.findBy({
-      email,
-    });
-    if (pseudoExistAlready.length > 0) {
-      throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
-    } else if (mailExistAlready.length > 0) {
-      throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
-    }
-    console.log(updateUserDto.pseudo);
-    try {
-      if (updateUserDto.email) {
-        upDateUtilisateur.email = updateUserDto.email;
-      }
-      if (updateUserDto.pseudo) {
-        upDateUtilisateur.pseudo = updateUserDto.pseudo;
-      }
-      if (updateUserDto.picture) {
-        upDateUtilisateur.picture = updateUserDto.picture;
-      }
-      if (updateUserDto.password) {
-        const salt = await bcrypt.genSalt();
-        let hashedPassword = await bcrypt.hash(password, salt);
-        upDateUtilisateur.password = hashedPassword;
-      }
-      return await this.utilisateurRepository.save(upDateUtilisateur);
-    } catch {
-      throw new Error('à definir');
-    }
-  }
-
-  //Suppression d'un compte utilisateur
-  async remove(id: string): Promise<Utilisateur | string> {
-    const result = await this.utilisateurRepository.delete({
-      id,
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException(`pas d'utilisateur trouvé avec l'id:${id}`);
-    }
-    return `Cette action a supprmé l'utilisateur #${id}`;
   }
 }

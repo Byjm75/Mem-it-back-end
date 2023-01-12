@@ -1,5 +1,3 @@
-import { Categorie } from 'src/categorie/entities/categorie.entity';
-import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +7,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Categorie } from 'src/categorie/entities/categorie.entity';
+import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 
 @Entity()
 export class Tache {
@@ -57,8 +57,4 @@ export class Tache {
     nullable: false,
   })
   user_: Utilisateur;
-
-  @ManyToMany(() => Utilisateur, { eager: true })
-  @JoinTable()
-  utilisateur: Utilisateur[];
 }

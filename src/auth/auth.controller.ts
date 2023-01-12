@@ -1,49 +1,22 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { GetUser } from './get-user.decorator';
-import { AuthGuard } from '@nestjs/passport';
 
+//Dossier Authentification
 @Controller('auth')
 export class AuthController {
   utilisateurService: any;
   constructor(private readonly authService: AuthService) {}
 
+  // Ici l'utilisateur créer son profil
   @Post('register')
   create(@Body() createAuthDto: CreateAuthDto) {
     return this.authService.register(createAuthDto);
   }
-
-  @Post('/login')
+  // Ici l'utilisateur se connect
+  @Post('login')
   login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     return this.authService.login(loginDto);
-  }
-
-  @Patch('/update/:id')
-  @UseGuards(AuthGuard())
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @GetUser() utilisateur: Utilisateur,
-  ): Promise<Utilisateur> {
-    console.log(utilisateur);
-    return this.authService.update(id, updateUserDto, utilisateur);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(id);
   }
 }
