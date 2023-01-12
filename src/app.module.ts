@@ -12,12 +12,20 @@ import { Categorie } from './categorie/entities/categorie.entity';
 import { Tache } from './tache/entities/tache.entity';
 import { Tag } from './tag/entities/tag.entity';
 import { AuthModule } from './auth/auth.module';
+import { ImageModule } from './image/image.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { Image } from './image/entities/image.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env.local',
     }),
+     MulterModule.register({ dest: './files', }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'files') }),
+    TypeOrmModule.forFeature([Image]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -25,7 +33,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Utilisateur, Categorie, Tache, Tag],
+      entities: [Utilisateur, Categorie, Tache, Tag, Image],
       synchronize: process.env.MODE === 'DEV' ? true : false,
     }),
     UtilisateurModule,
@@ -33,6 +41,7 @@ import { AuthModule } from './auth/auth.module';
     TacheModule,
     TagModule,
     AuthModule,
+    ImageModule
   ],
   controllers: [AppController],
   providers: [AppService],
