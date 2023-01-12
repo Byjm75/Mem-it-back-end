@@ -14,6 +14,7 @@ import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Categorie } from './entities/categorie.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('categorie')
 @UseGuards(AuthGuard())
