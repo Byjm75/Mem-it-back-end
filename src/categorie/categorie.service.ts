@@ -13,7 +13,8 @@ export class CategorieService {
     private categorieRepository: Repository<Categorie>,
   ) {}
 
-  // les catégories créées par un utilsateur
+  // ---------------les catégories créées par un utilsateur-------------------------//
+  
   async create(
     createCategorieDto: CreateCategorieDto,
     utilisateur: Utilisateur,
