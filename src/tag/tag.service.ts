@@ -5,7 +5,6 @@ import { Tag } from './entities/tag.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
-import { Categorie } from 'src/categorie/entities/categorie.entity';
 
 @Injectable()
 export class TagService {
