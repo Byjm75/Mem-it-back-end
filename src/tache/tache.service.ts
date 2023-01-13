@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
-import * as bcrypt from 'bcrypt';
 import { Tache } from './entities/tache.entity';
 import { updateTacheDto } from './dto/update-tache.dto';
-import { Categorie } from 'src/categorie/entities/categorie.entity';
 
 @Injectable()
 export class TacheService {
