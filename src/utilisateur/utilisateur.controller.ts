@@ -1,20 +1,17 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UtilisateurService } from './utilisateur.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RoleEnumType, Utilisateur } from './entities/utilisateur.entity';
+import { Utilisateur } from './entities/utilisateur.entity';
 import { Body, Delete, Patch } from '@nestjs/common/decorators';
-import { UpdateUserDto } from 'src/auth/dto/updateUser.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
-import { resolveSoa } from 'dns';
-import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('utilisateur')
 @UseGuards(AuthGuard())
 export class UtilisateurController {
   constructor(private readonly utilisateurService: UtilisateurService) {}
 
-  //--------------------------------------------REQUETE UTILISATEURS--------------------------------------------------------------------------------
+  //--------------------------------------------REQUETE UTILISATEURS------------------------------//
 
   @Get(':id')
   findOne(
@@ -23,8 +20,6 @@ export class UtilisateurController {
   ): Promise<Utilisateur> {
     return this.utilisateurService.findOne(id, utilisateur);
   }
-
-  // Update d'un utilisateur , interrogation sur mise en place d'un update admin pour user en admin = création d'une route supplémentaire?pertinence?
 
   @Patch(':id')
   update(
@@ -46,13 +41,13 @@ export class UtilisateurController {
   }
 
   //-------------------------------REQUETES ADMIN---------------------------//
-
-  @Get('/admin')
+  //requetes avec route sécurisé pour l'Admin
+  @Get()
   findAllUser(): Promise<Utilisateur[]> {
     return this.utilisateurService.findAllUser();
   }
 
-  @Get('/admin/:id')
+  @Get(':id')
   findOneUser(
     @Param('id') id: string,
     @GetUser() utilisateur: Utilisateur,

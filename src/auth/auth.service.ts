@@ -70,12 +70,13 @@ export class AuthService {
     console.log('je veux ton mail-----------', email);
     console.log('je veux ton mdp------------', password);
     console.log('je veux ton role-----------', role);
-
+    //Ici comparasaison du MP Hashé
     if (utilisateur && (await bcrypt.compare(password, utilisateur.password))) {
       //Supprime la propriété de taches de l'objet l'utilisateur
       delete utilisateur.taches;
       const payload = { utilisateur };
       console.log('je veux ton profil--------', utilisateur);
+      //Ici envoie du Token d'accés
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {

@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
-import { RoleEnumType, Utilisateur } from './entities/utilisateur.entity';
+import { Utilisateur } from './entities/utilisateur.entity';
 import { Repository, Table } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { MethodNotAllowedException } from '@nestjs/common/exceptions';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class UtilisateurService {
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
   ) {}
-  //-------------------------------REQUETES UTILISATEUR------------------------
+  //-------------------------------REQUETES UTILISATEUR------------------------//
 
   async findOne(
     idValue: string,
@@ -93,6 +92,7 @@ export class UtilisateurService {
   }
 
   //----------------------------------REQUETES ADMIN-------------------------//
+
   async findAllUser(): Promise<Utilisateur[]> {
     return await this.utilisateurRepository.find();
   }
