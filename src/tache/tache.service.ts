@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { Repository } from 'typeorm';
 import { CreateTacheDto } from './dto/create-tache.dto';
-import * as bcrypt from 'bcrypt';
 import { Tache } from './entities/tache.entity';
 import { updateTacheDto } from './dto/update-tache.dto';
 
 @Injectable()
 export class TacheService {
+  CategorieRepository: any;
   constructor(
     @InjectRepository(Tache)
     private TacheRepository: Repository<Tache>,
@@ -28,12 +28,32 @@ export class TacheService {
     if (existAlready !== null) {
       return `Vous avez déja crée la Tâche avec le titre:${title} ${utilisateur}`;
     }
+
     const newTache = await this.TacheRepository.create({
       ...createTacheDto,
       user_: utilisateur,
+      // categorie_: categorieId,
     });
+    try{
+      if(createTacheDto.title)
+      {createTacheDto.title = newTache.title}
+    
+    if(createTacheDto.date_event)
+      {createTacheDto.date_event = newTache.date_event}
+    console.log(' create tache dto date',createTacheDto.date_event)
+    if(createTacheDto.body)
+      {createTacheDto.body = newTache.body}
+      if(createTacheDto.image)
+      {createTacheDto.image= newTache.image}
+      if(createTacheDto.url)
+      {createTacheDto.url= newTache.url}
+    
+
     return await this.TacheRepository.save(newTache);
   }
+  catch{
+    throw new Error('erreur test')
+  }}
 
   async findAllTaskByUser(utilisateur: Utilisateur): Promise<Tache[]> {
     const taskFound = await this.TacheRepository.findBy({
