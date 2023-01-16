@@ -10,5 +10,6 @@ import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
   imports: [AuthModule, TypeOrmModule.forFeature([Tache, Utilisateur])],
   controllers: [TacheController],
   providers: [TacheService],
+  exports: [TacheService]
 })
 export class TacheModule {}

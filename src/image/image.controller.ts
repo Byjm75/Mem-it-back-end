@@ -25,10 +25,13 @@ import type { Response } from 'express';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { CreateCategorieDto } from 'src/categorie/dto/create-categorie.dto';
 import { CategorieService } from 'src/categorie/categorie.service';
+import { TacheService } from 'src/tache/tache.service';
+import { CreateTacheDto } from 'src/tache/dto/create-tache.dto';
 
 @Controller('image')
 @UseGuards(AuthGuard())
 export class ImageController {
+  tacheService: any;
   constructor(
     private readonly imageService: ImageService,
     private categorieService: CategorieService,
@@ -61,6 +64,39 @@ export class ImageController {
 
     // créer un objet categorie : { title : body.categorieTitle, imagePath: file.filename}
     // enregistrer dans la BDD la categorie
+  }
+  @Post('uploadTask')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFileTask(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body,
+    @GetUser() user,
+  ) {
+    console.log('MEMO TTITLE', body.tacheTitle);
+    console.log(file);
+
+    const tache1: CreateTacheDto = {
+      title: body.tacheTitle,
+      image: file.filename,
+      body: body.tacheBody,
+      date_event: body.tachedateEvent,
+      url: body.tacheURL,
+      categorie_: body.categorieId,
+    };
+    console.log('usercat', body.categorieId)
+    const tache2: CreateTacheDto = {
+      title: body.tacheTitle,
+      image: '',
+      body: body.tacheBody,
+      date_event: body.tachedateEvent,
+      url: body.tacheURL,
+      categorie_: body.categorieId,
+    };
+    if (file.path.length < 1) {
+      return this.tacheService.create(tache2, user);
+    } else {
+      return this.tacheService.create(tache1, user);
+    }
   }
 
   @Get(':filename')
