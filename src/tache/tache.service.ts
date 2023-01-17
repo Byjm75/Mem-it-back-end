@@ -14,7 +14,7 @@ export class TacheService {
     private TacheRepository: Repository<Tache>,
     @InjectRepository(Utilisateur)
     private UtilisateurRepository: Repository<Utilisateur>,
-  ) {}
+  ) { }
 
   async create(
     createTacheDto: CreateTacheDto,
@@ -33,26 +33,25 @@ export class TacheService {
       ...createTacheDto,
       user_: utilisateur,
     });
-    try{
-       if(createTacheDto.title)
-      {createTacheDto.title = newTache.title}
-    
-    if(createTacheDto.date_event)
-      {createTacheDto.date_event = newTache.date_event}
-    console.log(' create tache dto date',createTacheDto.date_event)
-    if(createTacheDto.body)
-      {createTacheDto.body = newTache.body}
-      if(createTacheDto.image)
-      {createTacheDto.image= newTache.image}
-      if(createTacheDto.url)
-      {createTacheDto.url= newTache.url}
-    
+    try {
+      if (createTacheDto.title) { createTacheDto.title = newTache.title }
 
-    return await this.TacheRepository.save(newTache);
+      if (createTacheDto.date_event) { createTacheDto.date_event = newTache.date_event }
+      console.log(' create tache dto date', createTacheDto.date_event)
+      if (createTacheDto.body) { createTacheDto.body = newTache.body }
+      if (createTacheDto.image) { createTacheDto.image = newTache.image }
+      if (createTacheDto.url) { createTacheDto.url = newTache.url }
+      if (createTacheDto.categorie_) {
+        createTacheDto.categorie_ = newTache.categorie_
+      }
+
+
+      return await this.TacheRepository.save(newTache);
     }
-  catch(e){
+    catch (e) {
       throw new Error(e);
-  }}
+    }
+  }
 
   async findAllTaskByUser(utilisateur: Utilisateur): Promise<Tache[]> {
     const taskFound = await this.TacheRepository.findBy({
@@ -106,20 +105,37 @@ export class TacheService {
     }
 
     try {
-      if (updateTacheDto.body !== null) {
-        tacheToUpdate.body = updateTacheDto.body;
+      if (!updateTacheDto.body) {
+        tacheToUpdate.body = tacheToUpdate.body;
       }
-      if (updateTacheDto.date_event !== null) {
+      else {
+        tacheToUpdate.body = updateTacheDto.body
+      }
+      if (!updateTacheDto.date_event) {
+        tacheToUpdate.date_event = tacheToUpdate.date_event;
+      }
+      else {
         tacheToUpdate.date_event = updateTacheDto.date_event;
       }
-      if (updateTacheDto.image !== null) {
-        tacheToUpdate.image = updateTacheDto.image;
+
+
+      if (!updateTacheDto.title) {
+        tacheToUpdate.title = tacheToUpdate.title;
       }
-      if (updateTacheDto.title !== null) {
-        tacheToUpdate.title = updateTacheDto.title;
+      else {
+        tacheToUpdate.title = updateTacheDto.title
       }
-      if (updateTacheDto.url !== null) {
+      if (!updateTacheDto.url) {
+        tacheToUpdate.url = tacheToUpdate.url;
+      }
+      else {
         tacheToUpdate.url = updateTacheDto.url;
+      }
+      if (!updateTacheDto.categorie_) {
+        tacheToUpdate.categorie_ = tacheToUpdate.categorie_;
+      }
+      else {
+        tacheToUpdate.categorie_ = updateTacheDto.categorie_;
       }
       return await this.TacheRepository.save(tacheToUpdate);
     } catch {
