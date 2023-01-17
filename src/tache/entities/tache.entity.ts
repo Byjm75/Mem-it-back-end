@@ -49,6 +49,7 @@ export class Tache {
 
   @ManyToOne(() => Categorie, (categories) => categories.taches, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   categorie_: Categorie;
 

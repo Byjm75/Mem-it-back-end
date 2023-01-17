@@ -32,10 +32,9 @@ export class TacheService {
     const newTache = await this.TacheRepository.create({
       ...createTacheDto,
       user_: utilisateur,
-      // categorie_: categorieId,
     });
     try{
-      if(createTacheDto.title)
+       if(createTacheDto.title)
       {createTacheDto.title = newTache.title}
     
     if(createTacheDto.date_event)
@@ -50,9 +49,9 @@ export class TacheService {
     
 
     return await this.TacheRepository.save(newTache);
-  }
-  catch{
-    throw new Error('erreur test')
+    }
+  catch(e){
+      throw new Error(e);
   }}
 
   async findAllTaskByUser(utilisateur: Utilisateur): Promise<Tache[]> {
