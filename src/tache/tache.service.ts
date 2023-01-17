@@ -106,20 +106,32 @@ export class TacheService {
     }
 
     try {
-      if (updateTacheDto.body !== null) {
+      if (!updateTacheDto.body) {
+        tacheToUpdate.body = tacheToUpdate.body;
+      } else {
         tacheToUpdate.body = updateTacheDto.body;
       }
-      if (updateTacheDto.date_event !== null) {
+      if (!updateTacheDto.date_event) {
+        tacheToUpdate.date_event = tacheToUpdate.date_event;
+      } else {
         tacheToUpdate.date_event = updateTacheDto.date_event;
       }
-      if (updateTacheDto.image !== null) {
-        tacheToUpdate.image = updateTacheDto.image;
-      }
-      if (updateTacheDto.title !== null) {
+
+      if (!updateTacheDto.title) {
+        tacheToUpdate.title = tacheToUpdate.title;
+      } else {
         tacheToUpdate.title = updateTacheDto.title;
       }
-      if (updateTacheDto.url !== null) {
+      if (!updateTacheDto.url) {
+        tacheToUpdate.url = tacheToUpdate.url;
+      } else {
         tacheToUpdate.url = updateTacheDto.url;
+      }
+      if (!updateTacheDto.categorie) {
+        tacheToUpdate.categorie_ = tacheToUpdate.categorie_;
+      }
+      {
+        tacheToUpdate.categorie_ = updateTacheDto.categorie;
       }
       return await this.TacheRepository.save(tacheToUpdate);
     } catch {
