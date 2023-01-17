@@ -7,13 +7,15 @@ import { AuthModule } from 'src/auth/auth.module';
 import { Utilisateur } from 'src/utilisateur/entities/utilisateur.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { CategorieModule } from 'src/categorie/categorie.module';
+import { TacheModule } from 'src/tache/tache.module';
 
 @Module({
   imports: [
     AuthModule,
     TypeOrmModule.forFeature([Image, Utilisateur]),
     MulterModule.register({ dest: './files', }),
-    CategorieModule
+    CategorieModule,
+    TacheModule,
   ],
   controllers: [ImageController],
   providers: [ImageService],

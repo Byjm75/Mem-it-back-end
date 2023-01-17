@@ -25,15 +25,20 @@ import type { Response } from 'express';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { CreateCategorieDto } from 'src/categorie/dto/create-categorie.dto';
 import { CategorieService } from 'src/categorie/categorie.service';
+import { TacheService } from 'src/tache/tache.service';
+import { CreateTacheDto } from 'src/tache/dto/create-tache.dto';
+import { UpdateCategorieDto } from 'src/categorie/dto/update-categorie.dto';
 
 @Controller('image')
 @UseGuards(AuthGuard())
 export class ImageController {
+  tacheService: any;
   constructor(
     private readonly imageService: ImageService,
     private categorieService: CategorieService,
   ) {}
 
+  /*post+upload categorie*/
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
@@ -62,7 +67,37 @@ export class ImageController {
     // créer un objet categorie : { title : body.categorieTitle, imagePath: file.filename}
     // enregistrer dans la BDD la categorie
   }
+  
+  /*patch+upload categorie*/
+  @Post(':id')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFilePatch(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body,
+    @GetUser() user,
+    @Param('id') idValue: string,
+  ) {
+    console.log('CATEGORIE TTITLE', body.categorieTitle);
+    console.log(file);
 
+    const categorie1: UpdateCategorieDto = {
+      title: body.categorieTitle,
+      image: file.filename,
+    };
+    const categorie2: UpdateCategorieDto = {
+      title: body.categorieTitle,
+      image: '',
+    };
+    if (file.path.length < 1) {
+      return this.categorieService.update(idValue, categorie2, user);
+    } else {
+      return this.categorieService.update(idValue, categorie1, user);
+    }
+
+
+  }
+
+  /*get photos uploadee*/
   @Get(':filename')
   getFile(
     @Param('filename') filename: string,
