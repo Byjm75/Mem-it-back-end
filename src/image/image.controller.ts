@@ -27,6 +27,7 @@ import { CreateCategorieDto } from 'src/categorie/dto/create-categorie.dto';
 import { CategorieService } from 'src/categorie/categorie.service';
 import { TacheService } from 'src/tache/tache.service';
 import { CreateTacheDto } from 'src/tache/dto/create-tache.dto';
+import { UpdateCategorieDto } from 'src/categorie/dto/update-categorie.dto';
 
 @Controller('image')
 @UseGuards(AuthGuard())
@@ -37,6 +38,7 @@ export class ImageController {
     private categorieService: CategorieService,
   ) {}
 
+  /*post+upload categorie*/
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
@@ -65,40 +67,37 @@ export class ImageController {
     // créer un objet categorie : { title : body.categorieTitle, imagePath: file.filename}
     // enregistrer dans la BDD la categorie
   }
-  @Post('uploadTask')
+  
+  /*patch+upload categorie*/
+  @Post(':id')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFileTask(
+  uploadFilePatch(
     @UploadedFile() file: Express.Multer.File,
     @Body() body,
     @GetUser() user,
+    @Param('id') idValue: string,
   ) {
-    console.log('MEMO TTITLE', body.tacheTitle);
+    console.log('CATEGORIE TTITLE', body.categorieTitle);
     console.log(file);
 
-    const tache1: CreateTacheDto = {
-      title: body.tacheTitle,
+    const categorie1: UpdateCategorieDto = {
+      title: body.categorieTitle,
       image: file.filename,
-      body: body.tacheBody,
-      date_event: body.tachedateEvent,
-      url: body.tacheURL,
-      categorie_: body.categorieId,
     };
-    console.log('usercat', body.categorieId)
-    const tache2: CreateTacheDto = {
-      title: body.tacheTitle,
+    const categorie2: UpdateCategorieDto = {
+      title: body.categorieTitle,
       image: '',
-      body: body.tacheBody,
-      date_event: body.tachedateEvent,
-      url: body.tacheURL,
-      categorie_: body.categorieId,
     };
     if (file.path.length < 1) {
-      return this.tacheService.create(tache2, user);
+      return this.categorieService.update(idValue, categorie2, user);
     } else {
-      return this.tacheService.create(tache1, user);
+      return this.categorieService.update(idValue, categorie1, user);
     }
+
+
   }
 
+  /*get photos uploadee*/
   @Get(':filename')
   getFile(
     @Param('filename') filename: string,
