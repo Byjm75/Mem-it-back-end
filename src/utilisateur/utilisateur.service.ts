@@ -11,7 +11,7 @@ export class UtilisateurService {
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
-  ) {}
+  ) { }
   //-------------------------------REQUETES UTILISATEUR------------------------//
 
   async findOne(
@@ -54,27 +54,40 @@ export class UtilisateurService {
     const mailExistAlready = await this.utilisateurRepository.findBy({
       email,
     });
-    if (upDateUtilisateur.pseudo && pseudoExistAlready.length > 0) {
+    if (upDateUserDto.pseudo && pseudoExistAlready.length > 0) {
       throw new Error(`L'utilisateur existe déja avec ce pseudo:${pseudo}`);
-    } else if (upDateUtilisateur.email && mailExistAlready.length > 0) {
+    } else if (upDateUserDto.email && mailExistAlready.length > 0) {
       throw new Error(`L'utilisateur existe déja avec ce mail:${email}`);
     }
     console.log(upDateUserDto.pseudo);
     try {
-      if (upDateUserDto.email) {
-        upDateUtilisateur.email = upDateUserDto.email;
+      if (!upDateUserDto.email) {
+        upDateUtilisateur.email = upDateUtilisateur.email;
       }
-      if (upDateUserDto.pseudo) {
-        upDateUtilisateur.pseudo = upDateUserDto.pseudo;
+      else { upDateUtilisateur.email = upDateUserDto.email }
+      if (!upDateUserDto.password) {
+        upDateUtilisateur.password = upDateUtilisateur.password;
       }
-      if (upDateUserDto.picture) {
-        upDateUtilisateur.picture = upDateUserDto.picture;
-      }
-      if (upDateUserDto.password) {
+      else {
         const salt = await bcrypt.genSalt();
         let hashedPassword = await bcrypt.hash(password, salt);
         upDateUtilisateur.password = hashedPassword;
       }
+      if (!upDateUserDto.pseudo) {
+        upDateUtilisateur.pseudo = upDateUtilisateur.pseudo;
+      }
+      else { upDateUtilisateur.pseudo = upDateUserDto.pseudo }
+      // if (upDateUserDto.pseudo) {
+      //   upDateUtilisateur.pseudo = upDateUserDto.pseudo;
+      // }
+      // if (upDateUserDto.picture) {
+      //   upDateUtilisateur.picture = upDateUserDto.picture;
+      // }
+      // if (upDateUserDto.password) {
+      //   const salt = await bcrypt.genSalt();
+      //   let hashedPassword = await bcrypt.hash(password, salt);
+      //   upDateUtilisateur.password = hashedPassword;
+      // }
       return await this.utilisateurRepository.save(upDateUtilisateur);
     } catch {
       throw new Error("Autre erreur, merci de contacter l'administrateur");
