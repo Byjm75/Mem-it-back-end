@@ -11,7 +11,7 @@ export class UtilisateurService {
   constructor(
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
-  ) { }
+  ) {}
   //-------------------------------REQUETES UTILISATEUR------------------------//
 
   async findOne(
@@ -63,20 +63,21 @@ export class UtilisateurService {
     try {
       if (!upDateUserDto.email) {
         upDateUtilisateur.email = upDateUtilisateur.email;
+      } else {
+        upDateUtilisateur.email = upDateUserDto.email;
       }
-      else { upDateUtilisateur.email = upDateUserDto.email }
       if (!upDateUserDto.password) {
         upDateUtilisateur.password = upDateUtilisateur.password;
-      }
-      else {
+      } else {
         const salt = await bcrypt.genSalt();
         let hashedPassword = await bcrypt.hash(password, salt);
         upDateUtilisateur.password = hashedPassword;
       }
       if (!upDateUserDto.pseudo) {
         upDateUtilisateur.pseudo = upDateUtilisateur.pseudo;
+      } else {
+        upDateUtilisateur.pseudo = upDateUserDto.pseudo;
       }
-      else { upDateUtilisateur.pseudo = upDateUserDto.pseudo }
       // if (upDateUserDto.pseudo) {
       //   upDateUtilisateur.pseudo = upDateUserDto.pseudo;
       // }
