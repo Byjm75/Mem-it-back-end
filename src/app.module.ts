@@ -21,9 +21,9 @@ import { Image } from './image/entities/image.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env.local',
+      envFilePath: '.env',
     }),
-     MulterModule.register({ dest: './files', }),
+    MulterModule.register({ dest: './files' }),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'files') }),
     TypeOrmModule.forFeature([Image]),
     TypeOrmModule.forRoot({
@@ -41,7 +41,7 @@ import { Image } from './image/entities/image.entity';
     TacheModule,
     TagModule,
     AuthModule,
-    ImageModule
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
