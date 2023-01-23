@@ -7,3 +7,4 @@ export class LoginDto {
   password: string;
   role: RoleEnumType;
 }
+                   

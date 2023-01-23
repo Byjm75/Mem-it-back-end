@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -18,7 +19,7 @@ export class AuthService {
     @InjectRepository(Utilisateur)
     private utilisateurRepository: Repository<Utilisateur>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   //Création d'un compte utilisateur
   async register(createAuthDto: CreateAuthDto) {
@@ -43,9 +44,20 @@ export class AuthService {
       email,
     });
     if (pseudoExistAlready.length > 0) {
+      throw new BadRequestException('Ce pseudo est déjà utilisé', {
+        cause: new Error(),
+      })
       return `L'utilisateur existe déja avec ce pseudo:${pseudo}`;
     } else if (mailExistAlready.length > 0) {
+      throw new BadRequestException('Cette adresse mail est déjà utilisée', {
+        cause: new Error(),
+      })
       return `L'utilisateur existe déja avec ce mail:${email}`;
+    }
+    if (createAuthDto.email.length < 4 || createAuthDto.password.length < 4 || createAuthDto.pseudo.length < 4) {
+      throw new BadRequestException('Les champs doivent comporter au minimum 4 caractères', {
+        cause: new Error(),
+      })
     }
     try {
       const createdUser = await this.utilisateurRepository.save(user);
